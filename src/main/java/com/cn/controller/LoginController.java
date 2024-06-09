@@ -62,7 +62,7 @@ public class LoginController {
         return ResultResponse.success(result);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @PassToken
     public ResultResponse<SysUserDto> login(@RequestBody CommonRequest<SysUser> request){
         SysUser loginInfo = request.getRequestData();
