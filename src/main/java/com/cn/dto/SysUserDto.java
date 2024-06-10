@@ -27,5 +27,5 @@ public class SysUserDto implements Serializable {
     private Date mtime;
     private String token;
     private Role role;
-    private List<Menu> menuList;
+   // private List<Menu> menuList;
 }

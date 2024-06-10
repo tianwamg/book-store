@@ -104,8 +104,13 @@ public class LoginController {
                     .userId(sysUser.getUserId())
                     .name(sysUser.getName())
                     .roleId(sysUser.getRoleId())
+                    .status(sysUser.getStatus())
+                    .phone(sysUser.getPhone())
+                    .email(sysUser.getEmail())
+                    .expireTime(sysUser.getExpireTime())
+                    .ctime(sysUser.getExpireTime())
+                    .mtime(sysUser.getMtime())
                     .role(role)
-                    .menuList(null)//TODO
                     .token(token)
                     .build();
             return ResultResponse.success(sysUserDto);
