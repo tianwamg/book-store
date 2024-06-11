@@ -1,8 +1,11 @@
 package com.cn.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,6 +23,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Menu implements Serializable {
 
     private static final long serialVersionUID=1L;
@@ -65,6 +69,7 @@ public class Menu implements Serializable {
     @TableLogic(delval = "-1",value = "1")
     private Integer isDelete;
 
+    @TableField(exist = false)
     private List<Menu> subList;
 
 }

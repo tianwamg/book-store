@@ -26,7 +26,7 @@ public class PriceController {
     @Autowired
     IPriceService iPriceService;
 
-    @GetMapping("/pagelist")
+    @PostMapping("/pagelist")
     public ResultResponse<Page<Price>> getPageList(@RequestBody CommonRequest<Price> request){
         Page<Price> page = iPriceService.getPageList(request.getPage(), request.getRequestData());
         return ResultResponse.success(page);

@@ -42,7 +42,7 @@ public class RoleController {
      * @param request
      * @return
      */
-    @GetMapping("/list")
+    @PostMapping("/list")
     public ResultResponse<Page<Role>> getList(@RequestBody CommonRequest<Role> request){
         Page<Role> page = iRoleService.getPageList(request);
         return ResultResponse.success(page);
@@ -71,7 +71,7 @@ public class RoleController {
      * @return
      */
     @PostMapping("/update")
-    public ResultResponse updateRoleInfo(CommonRequest<Role> request){
+    public ResultResponse updateRoleInfo(@RequestBody CommonRequest<Role> request){
         boolean result = iRoleService.updateById(request.getRequestData());
         return ResultResponse.success(result);
     }

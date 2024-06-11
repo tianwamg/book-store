@@ -36,7 +36,7 @@ public class PermissionControlller {
     /**
      * 获取角色权限
      */
-    @GetMapping("/list")
+    @PostMapping("/list")
     public ResultResponse<List<Menu>> list(@RequestBody CommonRequest<Permission> request){
         List<Menu> list = iPermissionService.getMenuTreeList(request.getRequestData().getRoleId());
         return ResultResponse.success(list);

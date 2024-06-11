@@ -24,7 +24,7 @@ public class SensitiveController {
     @Autowired
     ISensitiveService iSensitiveService;
 
-    @GetMapping("pagelist")
+    @PostMapping("pagelist")
     public ResultResponse<Page<Sensitive>> getPageList(@RequestBody CommonRequest<Sensitive> request){
         Page<Sensitive> page = iSensitiveService.getPageList(request.getPage(),request.getRequestData());
         return ResultResponse.success(page);

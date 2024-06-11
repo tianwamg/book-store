@@ -24,8 +24,8 @@ public class BookPullController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @GetMapping("/pagelist")
-    public ResultResponse<Page<BookPull>> getPageList(CommonRequest<BookPull> request){
+    @PostMapping("/pagelist")
+    public ResultResponse<Page<BookPull>> getPageList(@RequestBody CommonRequest<BookPull> request){
         Page<BookPull> page = iBookPullService.getPageList(request.getPage(),request.getRequestData());
         return ResultResponse.success(page);
 
@@ -64,7 +64,7 @@ public class BookPullController {
      * @return
      */
     @PostMapping("/canceltask")
-    public ResultResponse cancelTask(CommonRequest request){
+    public ResultResponse cancelTask(@RequestBody CommonRequest request){
         return ResultResponse.success("");
     }
 
@@ -74,7 +74,7 @@ public class BookPullController {
      * @return
      */
     @PostMapping("/rebuildtask")
-    public ResultResponse rebuildTask(CommonRequest request){
+    public ResultResponse rebuildTask(@RequestBody CommonRequest request){
         //创建一个任务指令
         //将该指令放入mq
         //返回待进行结果

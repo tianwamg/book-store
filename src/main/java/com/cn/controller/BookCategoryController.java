@@ -34,7 +34,7 @@ public class BookCategoryController {
      * @param request
      * @return
      */
-    @GetMapping("/pagelist")
+    @PostMapping("/pagelist")
     public ResultResponse<Page<BookCategory>> getPageList(CommonRequest<BookCategory> request){
         return ResultResponse.success(iBookCategoryService.getPageList(request.getPage(), request.getRequestData()));
     }
@@ -44,7 +44,7 @@ public class BookCategoryController {
      * @param request
      * @return
      */
-    @GetMapping("/alllist")
+    @PostMapping("/alllist")
     public ResultResponse<List<BookCategory>> getAllList(CommonRequest request){
         return ResultResponse.success(iBookCategoryService.getAllList());
     }
@@ -54,7 +54,7 @@ public class BookCategoryController {
      * @param request
      * @return
      */
-    @GetMapping("plist")
+    @PostMapping("plist")
     public ResultResponse<List<BookCategory>> getParentList(CommonRequest<BookCategory> request){
         BookCategory category = request.getRequestData();
         category.setPid(null);
@@ -66,7 +66,7 @@ public class BookCategoryController {
      * @param request
      * @return
      */
-    @GetMapping("sublist")
+    @PostMapping("sublist")
     public ResultResponse<List<BookCategory>> getChildList(CommonRequest<BookCategory> request){
         BookCategory category = request.getRequestData();
         category.setId(null);

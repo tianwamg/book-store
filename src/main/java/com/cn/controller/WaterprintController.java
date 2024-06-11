@@ -25,7 +25,7 @@ public class WaterprintController {
     @Autowired
     IWaterprintService iWaterprintService;
 
-    @GetMapping("/pagelist")
+    @PostMapping("/pagelist")
     public ResultResponse<Page<Waterprint>> getPageList(@RequestBody CommonRequest<Waterprint> request){
         Page<Waterprint> page = iWaterprintService.getPageList(request.getPage(), request.getRequestData());
         return ResultResponse.success(page);

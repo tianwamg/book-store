@@ -23,7 +23,7 @@ public class SysUserController {
      * @param request
      * @return
      */
-    @GetMapping("/list")
+    @PostMapping("/list")
     public ResultResponse<Page<SysUser>> getList(@RequestBody CommonRequest<SysUser> request){
         Page<SysUser> page = iSysUerServicel.getPageList(request);
         return ResultResponse.success(page);
@@ -34,7 +34,7 @@ public class SysUserController {
      * @param request
      * @return
      */
-    @GetMapping("/unactive")
+    @PostMapping("/unactive")
     public ResultResponse<Page<SysUser>> getunactiveList(@RequestBody CommonRequest<SysUser> request){
         request.getRequestData().setStatus(0);
         Page<SysUser> page = iSysUerServicel.getPageList(request);
@@ -47,7 +47,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/update")
-    public ResultResponse<Integer> update(CommonRequest<SysUser> request){
+    public ResultResponse<Integer> update(@RequestBody CommonRequest<SysUser> request){
         int result = iSysUerServicel.updateUserInfo(request.getRequestData());
         return ResultResponse.success(result);
     }
@@ -58,7 +58,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/active")
-    public ResultResponse<Integer> active(CommonRequest<SysUser> request){
+    public ResultResponse<Integer> active(@RequestBody CommonRequest<SysUser> request){
         SysUser sysUser = request.getRequestData();
         sysUser.setRoleId(3);
         sysUser.setStatus(1);
@@ -72,8 +72,8 @@ public class SysUserController {
      * @param request
      * @return
      */
-    @GetMapping("/info")
-    public ResultResponse<SysUser> info(CommonRequest<SysUser> request){
+    @PostMapping("/info")
+    public ResultResponse<SysUser> info(@RequestBody CommonRequest<SysUser> request){
         SysUser sysUser = iSysUerServicel.getByUserIdOrName(request.getRequestData());
         return ResultResponse.success(sysUser);
     }
