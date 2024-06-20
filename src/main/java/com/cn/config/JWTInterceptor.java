@@ -32,9 +32,9 @@ public class JWTInterceptor implements HandlerInterceptor {
         String profile = SpringContextUtil.getActiveProfile();
 
         //测试环境跳过验证
-        if(profile !=null && profile.equals("dev")){
+        /*if(profile !=null && profile.equals("dev")){
             return true;
-        }
+        }*/
         String token = request.getHeader("token");
         if(!(handler instanceof HandlerMethod)){//不是方法
             return true;
