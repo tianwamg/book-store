@@ -28,18 +28,23 @@ public class PriceController {
 
     @PostMapping("/pagelist")
     public ResultResponse<Page<Price>> getPageList(@RequestBody CommonRequest<Price> request){
+        request.getRequestData().setUserId(request.getUserId());
         Page<Price> page = iPriceService.getPageList(request.getPage(), request.getRequestData());
         return ResultResponse.success(page);
     }
 
     @PostMapping("/insert")
     public ResultResponse<Boolean> insert(@RequestBody CommonRequest<Price> request){
+        Price price = request.getRequestData();
+        price.setUserId(request.getUserId());
         boolean result = iPriceService.save(request.getRequestData());
         return ResultResponse.success(result);
     }
 
     @PostMapping("/update")
     public ResultResponse<Integer> update(@RequestBody CommonRequest<Price> request){
+        Price price = request.getRequestData();
+        price.setUserId(request.getUserId());
         int result = iPriceService.update(request.getRequestData());
         return ResultResponse.success(result);
     }
