@@ -27,19 +27,25 @@ public class WaterprintController {
 
     @PostMapping("/pagelist")
     public ResultResponse<Page<Waterprint>> getPageList(@RequestBody CommonRequest<Waterprint> request){
-        Page<Waterprint> page = iWaterprintService.getPageList(request.getPage(), request.getRequestData());
+        Waterprint waterprint = request.getRequestData();
+        waterprint.setUserId(request.getUserId());
+        Page<Waterprint> page = iWaterprintService.getPageList(request.getPage(), waterprint);
         return ResultResponse.success(page);
     }
 
     @PostMapping("/insert")
     public ResultResponse<Boolean> insert(@RequestBody CommonRequest<Waterprint> request){
-        boolean result = iWaterprintService.save(request.getRequestData());
+        Waterprint waterprint = request.getRequestData();
+        waterprint.setUserId(request.getUserId());
+        boolean result = iWaterprintService.save(waterprint);
         return ResultResponse.success(result);
     }
 
     @PostMapping("/update")
     public ResultResponse<Integer> update(@RequestBody CommonRequest<Waterprint> request){
-        int result = iWaterprintService.update(request.getRequestData());
+        Waterprint waterprint = request.getRequestData();
+        waterprint.setUserId(request.getUserId());
+        int result = iWaterprintService.update(waterprint);
         return ResultResponse.success(result);
     }
 
