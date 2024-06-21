@@ -22,7 +22,7 @@ public class ImageController {
         }
         String name = new Date().getTime()+"."+file.getOriginalFilename().split("\\.")[1];
         //TODO
-        String path = "" +"/" +userId+ "/"+ name;
+        String path = "D:\\waterprint\\"  +userId+ "\\"+ name;
         try {
             file.transferTo(new File(path));
         } catch (IOException e) {
