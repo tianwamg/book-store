@@ -26,6 +26,7 @@ public class BookPullController {
 
     @PostMapping("/pagelist")
     public ResultResponse<Page<BookPull>> getPageList(@RequestBody CommonRequest<BookPull> request){
+        request.getRequestData().setUserId(request.getUserId());
         Page<BookPull> page = iBookPullService.getPageList(request.getPage(),request.getRequestData());
         return ResultResponse.success(page);
 
