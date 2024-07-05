@@ -110,10 +110,10 @@ public class BookPullListener {
         JSONObject json = JSONObject.parseObject(msg);
         String cat = json.getString("cat");
         if(cat.equals("all")){
-            cat = "";
+            cat = null;
         }
         //TODO 创建线程池
-        List<BookInfo> list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"));
+        List<BookInfo> list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"));
         int page = 1;
         while (true){
             /**
@@ -124,14 +124,14 @@ public class BookPullListener {
             if(list.size()<50){
                 break;
             }
-            list = reptile(json.getLong("storeId"),cat,++page,json.getLong("userId"));
+            list = reptile(json.getLong("storeId"),cat,++page,json.getLong("userId"),json.getInteger("taskId"));
         }
     }
 
     /**
      * 爬取网络内容
      */
-    public List<BookInfo> reptile(Long storeId,String cat,int page,Long userId){
+    public List<BookInfo> reptile(Long storeId,String cat,int page,Long userId,int pullId){
         /**
          * 孔夫子书籍爬取列表有两种不同格式，爬取时需要针对不同情况做不同解析
          */
@@ -169,6 +169,7 @@ public class BookPullListener {
                 Elements blogList = blog.getElementsByClass("item clearfix");
                 for (Element element : blogList) {
                     BookInfo bookInfo = new BookInfo();
+                    bookInfo.setPullId(pullId);
                     bookInfo.setUserId(userId);
                     bookInfo.setTitle(element.select("div.title a").text().trim());
                     String author = element.select("div.zl-isbn-info span.text").text();
@@ -192,6 +193,7 @@ public class BookPullListener {
                         }
                         bookInfo.setAuthor(as[0].trim());
                         bookInfo.setExtra(author);
+
                     }
                     list.add(bookInfo);
                 }

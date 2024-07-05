@@ -24,7 +24,7 @@ import java.util.List;
  * @author Ranger
  * @since 2024-04-02
  */
-@CacheConfig(cacheNames = "price")
+//@CacheConfig(cacheNames = "price")
 @Service
 public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements IPriceService {
 
@@ -32,7 +32,7 @@ public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements
     @Autowired
     PriceMapper priceMapper;
 
-    @Cacheable(cacheNames = "price",key = "#price.userId+'-'+#p.current")
+    //@Cacheable(cacheNames = "price",key = "#price.userId+'-'+#p.current")
     @Override
     public Page<Price> getPageList(com.cn.common.Page p, Price price) {
         Page<Price> page = new Page<>(p.getCurrent(),p.getPageSize());
@@ -44,22 +44,23 @@ public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements
         return priceMapper.selectPage(page,queryWrapper);
     }
 
-    @Cacheable(cacheNames = "price",key = "#userId")
+    //@Cacheable(cacheNames = "price",key = "#userId")
     @Override
     public List<Price> getAllList(Long userId) {
         QueryWrapper<Price> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(Price::getUserId,userId);
+                .eq(Price::getUserId,userId)
+                .eq(Price::getStatus,1);
         return priceMapper.selectList(queryWrapper);
     }
 
-    @CacheEvict(cacheNames = "price",key = "#price.userId",allEntries = true)
+    //@CacheEvict(cacheNames = "price",key = "#price.userId",allEntries = true)
     @Override
     public Integer update(Price price){
         return priceMapper.updateById(price);
     }
 
-    @CacheEvict(cacheNames = "price",key = "#price.userId",allEntries = true)
+    //@CacheEvict(cacheNames = "price",key = "#price.userId",allEntries = true)
     @Override
     public Integer delete(Price price){
         return priceMapper.deleteById(price.getId());

@@ -28,6 +28,8 @@ public class BookInfo implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    private Integer pullId;
+
     /**
      * userid
      */

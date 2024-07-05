@@ -1,7 +1,9 @@
 package com.cn.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cn.domain.BookInfo;
+import com.cn.request.CommonRequest;
 
 /**
  * <p>
@@ -12,5 +14,7 @@ import com.cn.domain.BookInfo;
  * @since 2024-05-03
  */
 public interface IBookInfoService extends IService<BookInfo> {
+
+    public Page<BookInfo> getPageList(CommonRequest<BookInfo> request);
 
 }

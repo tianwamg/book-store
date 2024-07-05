@@ -7,10 +7,7 @@ import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
 import com.cn.service.IBookCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,7 +32,7 @@ public class BookCategoryController {
      * @return
      */
     @PostMapping("/pagelist")
-    public ResultResponse<Page<BookCategory>> getPageList(CommonRequest<BookCategory> request){
+    public ResultResponse<Page<BookCategory>> getPageList(@RequestBody CommonRequest<BookCategory> request){
         return ResultResponse.success(iBookCategoryService.getPageList(request.getPage(), request.getRequestData()));
     }
 
@@ -45,7 +42,7 @@ public class BookCategoryController {
      * @return
      */
     @PostMapping("/alllist")
-    public ResultResponse<List<BookCategory>> getAllList(CommonRequest request){
+    public ResultResponse<List<BookCategory>> getAllList(@RequestBody CommonRequest request){
         return ResultResponse.success(iBookCategoryService.getAllList());
     }
 
@@ -55,7 +52,7 @@ public class BookCategoryController {
      * @return
      */
     @PostMapping("plist")
-    public ResultResponse<List<BookCategory>> getParentList(CommonRequest<BookCategory> request){
+    public ResultResponse<List<BookCategory>> getParentList(@RequestBody CommonRequest<BookCategory> request){
         BookCategory category = request.getRequestData();
         category.setPid(null);
         return ResultResponse.success(iBookCategoryService.getSubList(category));
@@ -67,24 +64,24 @@ public class BookCategoryController {
      * @return
      */
     @PostMapping("sublist")
-    public ResultResponse<List<BookCategory>> getChildList(CommonRequest<BookCategory> request){
+    public ResultResponse<List<BookCategory>> getChildList(@RequestBody CommonRequest<BookCategory> request){
         BookCategory category = request.getRequestData();
         category.setId(null);
         return ResultResponse.success(iBookCategoryService.getSubList(category));
     }
 
     @PostMapping("/insert")
-    public ResultResponse insert(CommonRequest<BookCategory> request){
+    public ResultResponse insert(@RequestBody CommonRequest<BookCategory> request){
         return ResultResponse.success(iBookCategoryService.save(request.getRequestData()));
     }
 
     @PostMapping("/update")
-    public ResultResponse update(CommonRequest<BookCategory> request){
+    public ResultResponse update(@RequestBody CommonRequest<BookCategory> request){
         return ResultResponse.success(iBookCategoryService.updateById(request.getRequestData()));
     }
 
     @PostMapping("/delete")
-    public ResultResponse delete(CommonRequest<BookCategory> request){
+    public ResultResponse delete(@RequestBody CommonRequest<BookCategory> request){
         BookCategory category = request.getRequestData();
         category.setStatus(-1);
         return ResultResponse.success(iBookCategoryService.updateById(category));

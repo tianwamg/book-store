@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 /**
  * <p>
  * 水印 服务实现类
@@ -39,4 +41,15 @@ public class WaterprintServiceImpl extends ServiceImpl<WaterprintMapper, Waterpr
     public int update(Waterprint waterprint) {
         return waterprintMapper.updateById(waterprint);
     }
+
+    @Override
+    public Waterprint getAllList(Long userId) {
+        QueryWrapper<Waterprint> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(Waterprint::getUserId,userId)
+                .eq(Waterprint::getStatus,1);
+        return waterprintMapper.selectOne(queryWrapper);
+    }
+
+
 }
