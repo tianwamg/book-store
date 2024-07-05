@@ -39,7 +39,7 @@ public class BookPullController {
                 .name("来源书店:"+pullTaskDto.getStoreId())
                 .remark("")
                 .status(0)
-                .userId(pullTaskDto.getUserId())
+                .userId(request.getUserId())
                 .build();
         iBookPullService.save(pull);
         //将该指令放入mq
@@ -47,8 +47,8 @@ public class BookPullController {
         try {
             JSONObject object = new JSONObject();
             object.put("storeId",pullTaskDto.getStoreId());
-            object.put("cat",pullTaskDto.getType());
-            object.put("userId",pullTaskDto.getUserId());
+            object.put("cat",pullTaskDto.getCategory());
+            object.put("userId",request.getUserId());
             object.put("taskId",pull.getId());
             rabbitTemplate.convertAndSend("pullbook", object.toJSONString());
         }catch (Exception e){
