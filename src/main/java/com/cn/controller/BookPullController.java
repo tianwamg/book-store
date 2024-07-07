@@ -9,6 +9,7 @@ import com.cn.response.ResultResponse;
 import com.cn.service.IBookPullService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/book/pull")
 public class BookPullController {
+
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @Autowired
     IBookPullService iBookPullService;
@@ -36,9 +41,16 @@ public class BookPullController {
     public ResultResponse buildTask(@RequestBody CommonRequest<PullTaskDto> request){
         //创建一个任务指令
         PullTaskDto pullTaskDto = request.getRequestData();
+
+        //封装消息指令
+        JSONObject object = new JSONObject();
+        object.put("storeId",pullTaskDto.getStoreId());
+        object.put("cat",pullTaskDto.getCategory());
+        object.put("userId",request.getUserId());
+
         BookPull pull = BookPull.builder()
-                .name("来源书店:"+pullTaskDto.getStoreId())
-                .remark("")
+                .name("任务来源书店:"+pullTaskDto.getStoreId())
+                .remark(object.toJSONString())
                 .status(0)
                 .userId(request.getUserId())
                 .build();
@@ -46,10 +58,6 @@ public class BookPullController {
         //将该指令放入mq
         //pull.getId();
         try {
-            JSONObject object = new JSONObject();
-            object.put("storeId",pullTaskDto.getStoreId());
-            object.put("cat",pullTaskDto.getCategory());
-            object.put("userId",request.getUserId());
             object.put("taskId",pull.getId());
             rabbitTemplate.convertAndSend("pullbook", object.toJSONString());
         }catch (Exception e){
@@ -65,8 +73,15 @@ public class BookPullController {
      * @return
      */
     @PostMapping("/canceltask")
-    public ResultResponse cancelTask(@RequestBody CommonRequest request){
-        return ResultResponse.success("");
+    public ResultResponse cancelTask(@RequestBody CommonRequest<BookPull> request){
+        BookPull pull = iBookPullService.getById(request.getRequestData().getId());
+        if(pull != null && pull.getStatus()==0){
+            pull.setStatus(-1);
+            iBookPullService.updateById(pull);
+            //放入redis中
+            redisTemplate.opsForValue().set("task_cancel_"+pull.getId(),"y");
+        }
+        return ResultResponse.success("采集任务取消成功");
     }
 
     /**
@@ -75,10 +90,22 @@ public class BookPullController {
      * @return
      */
     @PostMapping("/rebuildtask")
-    public ResultResponse rebuildTask(@RequestBody CommonRequest request){
-        //创建一个任务指令
-        //将该指令放入mq
-        //返回待进行结果
+    public ResultResponse rebuildTask(@RequestBody CommonRequest<BookPull> request){
+        BookPull pull = iBookPullService.getById(request.getRequestData().getId());
+        if(pull != null && pull.getStatus()==-1){
+            //删掉取消按钮
+            redisTemplate.delete("task_cancel_"+pull.getId());
+            pull.setStatus(0);
+            iBookPullService.updateById(pull);
+            //消息重新投递
+            JSONObject json = JSONObject.parseObject(pull.getRemark());
+            try {
+                json.put("taskId",pull.getId());
+                rabbitTemplate.convertAndSend("pullbook", json.toJSONString());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
         return ResultResponse.success("书籍拉取任务即将重新开始");
     }
 

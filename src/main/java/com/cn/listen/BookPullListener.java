@@ -17,6 +17,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class BookPullListener {
@@ -36,90 +38,106 @@ public class BookPullListener {
     @Autowired
     IBookPullService iBookPullService;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     /**
      * 爬虫拉取书籍信息
      * @param msg
      */
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage1(String msg){
-
         JSONObject json = JSONObject.parseObject(msg);
-        BookPull pull = BookPull.builder()
-                .id(json.getInteger("taskId"))
-                .status(1)
-                .remark("receive1...")
-                .build();
-        iBookPullService.updateById(pull);
-        System.out.println("receive1..."+msg);
-        handleMessage(msg);
+        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
+        if(cancel != null){
+            BookPull pull = BookPull.builder()
+                    .id(json.getInteger("taskId"))
+                    .status(1)
+                    .build();
+            iBookPullService.updateById(pull);
+            System.out.println("receive1..."+msg);
+            handleMessage(msg);
 
-        pull.setStatus(2);
-        iBookPullService.updateById(pull);
-        System.out.println("receive1...complete");
+            pull.setStatus(2);
+            iBookPullService.updateById(pull);
+            System.out.println("receive1...complete");
+            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
+        }
+
+
     }
 
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage2(String msg){
         JSONObject json = JSONObject.parseObject(msg);
-        BookPull pull = BookPull.builder()
-                .id(json.getInteger("taskId"))
-                .status(1)
-                .remark("receive2...")
-                .build();
-        iBookPullService.updateById(pull);
-        System.out.println("receive2..."+msg);
-        handleMessage(msg);
-        pull.setStatus(2);
-        iBookPullService.updateById(pull);
-        System.out.println("receive2...complete");
+        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
+        if(cancel != null){
+            BookPull pull = BookPull.builder()
+                    .id(json.getInteger("taskId"))
+                    .status(1)
+                    .build();
+            iBookPullService.updateById(pull);
+            System.out.println("receive2..."+msg);
+            handleMessage(msg);
+            pull.setStatus(2);
+            iBookPullService.updateById(pull);
+            System.out.println("receive2...complete");
+            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
+        }
     }
 
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage3(String msg){
         JSONObject json = JSONObject.parseObject(msg);
-        BookPull pull = BookPull.builder()
-                .id(json.getInteger("taskId"))
-                .status(1)
-                .remark("receive3...")
-                .build();
-        iBookPullService.updateById(pull);
-        System.out.println("receive3..."+msg);
-        handleMessage(msg);
-        pull.setStatus(2);
-        iBookPullService.updateById(pull);
-        System.out.println("receive3...complete");
+        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
+        if(cancel != null){
+            BookPull pull = BookPull.builder()
+                    .id(json.getInteger("taskId"))
+                    .status(1)
+                    .build();
+            iBookPullService.updateById(pull);
+            System.out.println("receive3..."+msg);
+            handleMessage(msg);
+            pull.setStatus(2);
+            iBookPullService.updateById(pull);
+            System.out.println("receive3...complete");
+            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
+        }
+
     }
 
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage4(String msg){
         JSONObject json = JSONObject.parseObject(msg);
-        BookPull pull = BookPull.builder()
-                .id(json.getInteger("taskId"))
-                .remark("receive4...")
-                .status(1)
-                .build();
-        iBookPullService.updateById(pull);
-        System.out.println("receive4..."+msg);
-        handleMessage(msg);
-        pull.setStatus(2);
-        iBookPullService.updateById(pull);
-        System.out.println("receive4...complete");
+        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
+        if(cancel != null){
+            BookPull pull = BookPull.builder()
+                    .id(json.getInteger("taskId"))
+                    .status(1)
+                    .build();
+            iBookPullService.updateById(pull);
+            System.out.println("receive4..."+msg);
+            handleMessage(msg);
+            pull.setStatus(2);
+            iBookPullService.updateById(pull);
+            System.out.println("receive4...complete");
+            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
+        }
     }
 
+    /**
+     * 将其写入数据库
+     * 继续进行拉取操作
+     */
     public void handleMessage(String msg){
         JSONObject json = JSONObject.parseObject(msg);
         String cat = json.getString("cat");
         if(cat.equals("all")){
             cat = null;
         }
-        //TODO 创建线程池
         List<BookInfo> list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"));
         int page = 1;
         while (true){
-            /**
-             * 将其写入数据库
-             * 继续进行拉取操作
-             */
             iBookInfoService.saveBatch(list);
             if(list.size()<50){
                 break;
