@@ -6,6 +6,7 @@ import com.cn.dto.SysUserDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
 import com.cn.service.ISysUerService;
+import com.cn.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +53,18 @@ public class SysUserController {
         return ResultResponse.success(result);
     }
 
+    /**
+     * 修改密码
+     * @param request
+     * @return
+     */
+    @PostMapping("/update/pwd")
+    public ResultResponse<Integer> updatePwd(@RequestBody CommonRequest<SysUser> request){
+        SysUser sysUser = request.getRequestData();
+        sysUser.setPassword(MD5Util.getMD5Digest(sysUser.getPassword()));
+        int result = iSysUerServicel.updateUserInfo(request.getRequestData());
+        return ResultResponse.success(result);
+    }
     /**
      * 激活用户
      * @param request

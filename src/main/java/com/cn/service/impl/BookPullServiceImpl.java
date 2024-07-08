@@ -31,7 +31,8 @@ public class BookPullServiceImpl extends ServiceImpl<BookPullMapper, BookPull> i
         queryWrapper.lambda()
                 .eq(BookPull::getUserId,pull.getUserId())
                 .eq(!StringUtils.isEmpty(pull.getStatus()),BookPull::getStatus,pull.getStatus())
-                .like(!StringUtils.isEmpty(pull.getName()),BookPull::getName,pull.getName());
+                .like(!StringUtils.isEmpty(pull.getName()),BookPull::getName,pull.getName())
+                .orderByDesc(BookPull::getId);
         return bookPullMapper.selectPage(p,queryWrapper);
     }
 }
