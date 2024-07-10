@@ -1,7 +1,6 @@
 package com.cn.controller;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.cn.anno.PassToken;
 import com.cn.domain.Role;
 import com.cn.domain.SysUser;
@@ -67,7 +66,11 @@ public class LoginController {
     public ResultResponse<SysUserDto> login(@RequestBody CommonRequest<SysUser> request){
         SysUser loginInfo = request.getRequestData();
         SysUser sysUser = iSysUerService.getByUserIdOrName(request.getRequestData());
-        if(!sysUser.equals(null) || sysUser != null){
+        if(sysUser != null){
+            String pwd = MD5Util.getMD5Digest(loginInfo.getPassword());
+            if(!sysUser.getPassword().equals(pwd)){
+                return ResultResponse.success("403","密码错误，请重新输入",null);
+            }
             //判断是否为普通用户
             if(sysUser.getRoleId()>2){
                 if(sysUser.getStatus() == 0){
@@ -83,10 +86,7 @@ public class LoginController {
                     return ResultResponse.success("403","当前用户未激活，请联系管理员",null);
                 }
             }
-            String pwd = MD5Util.getMD5Digest(loginInfo.getPassword());
-            if(!sysUser.getPassword().equals(pwd)){
-                return ResultResponse.success("403","密码错误，请重新输入",null);
-            }
+
             //生成登陆信息
             /**
              * 1.获取角色信息

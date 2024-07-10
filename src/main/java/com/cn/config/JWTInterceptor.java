@@ -29,6 +29,17 @@ public class JWTInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        /*if(request.getMethod().equals("OPTIONS")){
+            response.setHeader("Access-Control-Allow-0rigin","*");
+            response.setHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, HEAD, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers","token");
+            response.setHeader("Access-Control-Allow-Credentials","true");
+            response.setStatus(HttpServletResponse.SC_OK);
+
+        }*/
+
+        //*表示放行所有的源，http://127.0.0.1:5504
+
         String profile = SpringContextUtil.getActiveProfile();
 
         //测试环境跳过验证
