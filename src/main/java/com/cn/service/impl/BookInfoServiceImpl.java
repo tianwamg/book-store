@@ -33,7 +33,7 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
         QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
         Optional.ofNullable(request.getRequestData()).ifPresent(r->
                 queryWrapper.lambda()
-                    .eq(BookInfo::getUserId,r.getUserId())
+                    .eq(BookInfo::getUserId,request.getUserId())
                 .eq(!StringUtils.isEmpty(r.getStatus()),BookInfo::getStatus,r.getStatus())
                 .eq(!StringUtils.isEmpty(r.getPullId()),BookInfo::getPullId,r.getPullId())
                 );

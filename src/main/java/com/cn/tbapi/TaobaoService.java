@@ -18,11 +18,13 @@ import com.taobao.api.response.ItemcatsGetResponse;
 import com.taobao.api.response.PictureUploadResponse;
 import com.taobao.api.response.SellercatsListGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Cacheable(cacheNames = "apitb")
 @Service
 public class TaobaoService {
 
@@ -35,6 +37,7 @@ public class TaobaoService {
      * 获取分类模版
      * @return
      */
+    @Cacheable(cacheNames = "itemcat")
     public List<ItemCat> getCatTemplate(){
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
         ItemcatsGetRequest req = new ItemcatsGetRequest();
@@ -52,6 +55,7 @@ public class TaobaoService {
     /**
      * 获取用户自定义模版
      */
+    @Cacheable(cacheNames = "sellercat",key = "#userId")
     public List<SellerCat> getSellerCat(Long userId){
         String sessionKey = redisTemplate.opsForValue().get("taobao_"+userId).toString();
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
@@ -70,6 +74,7 @@ public class TaobaoService {
      * 获取店铺运费模版
      * @return
      */
+    @Cacheable(cacheNames = "postfee",key = "#userId")
     public List<DeliveryTemplate> getPostFeeTemplate(Long userId){
         String sessionKey = redisTemplate.opsForValue().get("taobao_"+userId).toString();
         TaobaoClient client = SingletonClient.INSTANCE.getClient();

@@ -48,8 +48,7 @@ public class BookPullListener {
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage1(String msg){
         JSONObject json = JSONObject.parseObject(msg);
-        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
-        if(cancel != null){
+        if(redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")) == null){
             BookPull pull = BookPull.builder()
                     .id(json.getInteger("taskId"))
                     .status(1)
@@ -70,8 +69,7 @@ public class BookPullListener {
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage2(String msg){
         JSONObject json = JSONObject.parseObject(msg);
-        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
-        if(cancel != null){
+        if(redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")) == null){
             BookPull pull = BookPull.builder()
                     .id(json.getInteger("taskId"))
                     .status(1)
@@ -89,8 +87,7 @@ public class BookPullListener {
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage3(String msg){
         JSONObject json = JSONObject.parseObject(msg);
-        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
-        if(cancel != null){
+        if(redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")) == null){
             BookPull pull = BookPull.builder()
                     .id(json.getInteger("taskId"))
                     .status(1)
@@ -109,8 +106,7 @@ public class BookPullListener {
     @RabbitListener(queues = "pullbook")
     public void receivePullBookMessage4(String msg){
         JSONObject json = JSONObject.parseObject(msg);
-        String cancel = redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")).toString();
-        if(cancel != null){
+        if(redisTemplate.opsForValue().get("task_cancel_"+json.getInteger("taskId")) == null){
             BookPull pull = BookPull.builder()
                     .id(json.getInteger("taskId"))
                     .status(1)
