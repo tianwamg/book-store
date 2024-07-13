@@ -21,7 +21,9 @@ import com.taobao.api.response.AlibabaItemPublishPropsGetResponse;
 import com.taobao.api.response.PictureUploadResponse;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -43,19 +45,28 @@ public class BookPushListener {
     @Autowired
     IPriceService iPriceService;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     /**
      * 向淘宝推送书籍任务
      * @param msg
      */
+    @RabbitListener(queues = "pushbook")
     public void receivePushBookMsg1(String msg){
         System.out.println("书籍发布任务开始...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
-
+        PushTaskDto pushTaskDto = JSONObject.parseObject(msg,PushTaskDto.class);
+        goodsPush(pushTaskDto);
     }
 
+    @RabbitListener(queues = "pushbook")
     public void receivePushBookMsg2(String msg){
         System.out.println("书籍发布任务开始...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
+        PushTaskDto pushTaskDto = JSONObject.parseObject(msg,PushTaskDto.class);
+        goodsPush(pushTaskDto);
+
     }
 
     public void receivePushBookMsg3(String msg){
@@ -77,12 +88,18 @@ public class BookPushListener {
         System.out.println("书籍发布任务开始...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
         PushTaskDto pushTaskDto = JSONObject.parseObject(msg,PushTaskDto.class);
+        goodsPush(pushTaskDto);
     }
 
 
 
 
-    public void goodsPush(PushTaskDto pushTaskDto,String sessionKey){
+    public void goodsPush(PushTaskDto pushTaskDto){
+        Object key = redisTemplate.opsForValue().get("taobao_"+pushTaskDto.getUserId());
+        if(key == null){
+            return;
+        }
+        String sessionKey = key.toString();
         List<Price> prices = getPrices(pushTaskDto.getUserId());
         Waterprint print = getPrints(pushTaskDto.getUserId());
         int current = 0 ;

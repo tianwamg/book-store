@@ -1,5 +1,7 @@
 package com.cn.controller;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.cn.dto.PushTaskDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
@@ -27,8 +29,9 @@ public class BookPushController {
     @PostMapping("/send/task")
     public ResultResponse push(@RequestBody CommonRequest<PushTaskDto> request){
         //获取推送信息，拿取缓存session，推送至mq
-        String sessionKey = redisTemplate.opsForValue().get("taobao_"+request.getUserId()).toString();
-        return null;
+        request.getRequestData().setUserId(request.getUserId());
+        rabbitTemplate.convertAndSend("pushbook", JSON.toJSONString(request.getRequestData()));
+        return ResultResponse.success("书籍进入发布任务队列，即将开始...");
     }
 
     public ResultResponse down(){

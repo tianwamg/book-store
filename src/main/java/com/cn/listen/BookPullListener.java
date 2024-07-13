@@ -134,9 +134,21 @@ public class BookPullListener {
         List<BookInfo> list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"));
         int page = 1;
         while (true){
-            iBookInfoService.saveBatch(list);
-            if(list.size()<50){
-                break;
+            if(list !=null ){
+                if(list.size() == 50){
+                    iBookInfoService.saveBatch(list);
+                }else{
+                    if(list.size() == 1 && list.get(0).getStatus()==-2 && page<5000){//读取数据有误，跳过,读取有误数据最多拉取5000条数据
+                        System.out.println("读取第n页数据有误,页书..."+page);
+                    }else{//拉取最后数据
+                        if(list.size()>0){
+                            iBookInfoService.saveBatch(list);
+                        }
+                        break;
+                    }
+
+                }
+
             }
             list = reptile(json.getLong("storeId"),cat,++page,json.getLong("userId"),json.getInteger("taskId"));
         }
@@ -180,6 +192,13 @@ public class BookPullListener {
                 Document document = Jsoup.parse(html);
                 // 获取内容列表
                 Element blog = document.getElementsByClass("result-list list-pic").first();
+                if(blog == null){
+                    BookInfo ninfo = new BookInfo();
+                    ninfo.setTitle("拉取有误");
+                    ninfo.setStatus(-2);
+                    list.add(ninfo);
+                    return list ;
+                }
                 Elements blogList = blog.getElementsByClass("item clearfix");
                 for (Element element : blogList) {
                     BookInfo bookInfo = new BookInfo();
