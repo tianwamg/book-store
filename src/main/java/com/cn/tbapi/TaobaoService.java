@@ -1,5 +1,7 @@
 package com.cn.tbapi;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.cn.dto.TaobaoCatDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
 import com.taobao.api.ApiException;
@@ -22,6 +24,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Cacheable(cacheNames = "apitb")
@@ -87,6 +90,11 @@ public class TaobaoService {
             e.printStackTrace();
         }
         return rsp.getDeliveryTemplates();
+    }
+
+    public List<TaobaoCatDto> getCats(){
+        String cat = redisTemplate.opsForValue().get("tao_sub_cat").toString();
+        return JSONArray.parseArray(cat,TaobaoCatDto.class);
     }
 
 

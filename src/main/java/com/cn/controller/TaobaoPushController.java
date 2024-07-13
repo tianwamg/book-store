@@ -1,13 +1,16 @@
 package com.cn.controller;
 
 import com.cn.dto.PushTaskDto;
+import com.cn.dto.TaobaoCatDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
 import com.cn.tbapi.SingletonClient;
 import com.cn.tbapi.TaobaoService;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
+import com.taobao.api.domain.DeliveryTemplate;
 import com.taobao.api.domain.ItemCat;
+import com.taobao.api.domain.SellerCat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,7 +68,7 @@ public class TaobaoPushController {
      * 获取用户自定义模版
      */
     @PostMapping("/seller/cat")
-    public ResultResponse getCatSerller(@RequestBody CommonRequest request){
+    public ResultResponse<List<SellerCat>> getCatSerller(@RequestBody CommonRequest request){
         return ResultResponse.success(taobaoService.getSellerCat(request.getUserId()));
     }
 
@@ -74,7 +77,12 @@ public class TaobaoPushController {
      * @return
      */
     @PostMapping("/temp/fee")
-    public ResultResponse getPostFeeTemplate(@RequestBody CommonRequest request){
+    public ResultResponse<List<DeliveryTemplate>> getPostFeeTemplate(@RequestBody CommonRequest request){
         return ResultResponse.success(taobaoService.getPostFeeTemplate(request.getUserId()));
+    }
+
+    @PostMapping("/subcat")
+    public ResultResponse<List<TaobaoCatDto>> getSubCat(){
+        return ResultResponse.success(taobaoService.getCats());
     }
 }

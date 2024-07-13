@@ -16,8 +16,10 @@ import com.taobao.api.ApiException;
 import com.taobao.api.FileItem;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.AlibabaItemPublishPropsGetRequest;
+import com.taobao.api.request.AlibabaItemPublishSubmitRequest;
 import com.taobao.api.request.PictureUploadRequest;
 import com.taobao.api.response.AlibabaItemPublishPropsGetResponse;
+import com.taobao.api.response.AlibabaItemPublishSubmitResponse;
 import com.taobao.api.response.PictureUploadResponse;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
@@ -31,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -105,10 +108,13 @@ public class BookPushListener {
         int current = 0 ;
         List<BookInfo> bookList = getBookList(current,50,pushTaskDto.getUserId(),pushTaskDto.getTaskId());
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
+        List<BookInfo> nInfo = new ArrayList<>();
         while (bookList !=null && bookList.size() >0){
+            nInfo.clear();
             bookList.parallelStream().forEach(n ->{
                 //处理水印
                 String path = "E:\\taobao\\"+pushTaskDto.getUserId()+"\\"+pushTaskDto.getTaskId()+n.getId()+".jpg";
+                path = "/Users/pandawong/Desktop/"+n.getPullId()+"-"+n.getId()+".jpg";
                 try {
                     imgwater(n.getImg(),print,path);
                 } catch (IOException e) {
@@ -128,13 +134,18 @@ public class BookPushListener {
                 //上传图片
                 String pic = taobaoImgUpload(path,n.getTitle(),sessionKey);
                 //上传商品
-                AlibabaItemPublishPropsGetRequest req = new AlibabaItemPublishPropsGetRequest();
+                AlibabaItemPublishSubmitRequest req = new AlibabaItemPublishSubmitRequest();
+                req.setBizType("taobao/1.0.0/brandAsyncRenderEnable");
                 req.setMarket("taobao");
-                req.setCatId(pushTaskDto.getCat());
+                req.setCatId(50010485l);
                 String schema = "<itemSchema>" +
                         "<field id=\"stuffStatus\" name=\"宝贝类型\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><value>"+6+"</value><options><option displayName=\"全新\" value=\"5\" readonly=\"false\"/><option displayName=\"二手\" value=\"6\" readonly=\"false\"/></options></field>" +
                         "<field id=\"title\" name=\"宝贝标题\" type=\"input\"><rules><rule name=\"tipRule\" value=\"标题和描述关键词是否违规自检工具：&lt;a href='//ss.taobao.com/compliance#/main' target='_blank'&gt;商品合规工具&lt;/a&gt;\"/><rule name=\"tipRule\" value=\"标题直接影响商品的搜索曝光机会，请&lt;a href='//market.m.taobao.com/app/qn/toutiao-new/index-pc.html#/detail/10682439?_k=rkwe5f' target='_blank'&gt;点此查看详情&lt;/a&gt;学习标题填写规范及优化知识\"/><rule name=\"tipRule\" value=\"即日起，标题中请勿使用制表符、换行符。若填入制表符、换行符，系统将自动替换成空格\"/><rule name=\"requiredRule\" value=\"true\"/><rule name=\"maxLengthRule\" value=\"60\" exProperty=\"include\" unit=\"byte\"/><rule name=\"tipRule\" value=\"最多允许输入30个汉字（60字符）\"/><rule name=\"valueTypeRule\" value=\"text\"/></rules>" +
                         "<value>"+pushTaskDto.getTitle()+n.getTitle()+"</value></field>" +
+                        "<field id=\"catProp\" name=\"类目属性\" type=\"complex\"><rules><rule name=\"tipRule\" value=\"若发布时遇到属性、属性值不能满足您提交商品的需求，请点击&lt;a href='https://cpv.taobao.com/report/categoryPropertyIssueReport.htm?categoryId=50010485' target='_blank'&gt;商品属性问题反馈&lt;/a&gt;\"/>" +
+                        "<rule name=\"tipRule\" value=\"请根据实际情况填写产品的重要属性，填写属性越完整，越有可能影响搜索流量，越有机会被消费者购买。&lt;a target = '_blank' href='https://market.m.taobao.com/app/qn/toutiao-new/index-pc.html#/detail/10671889?_k=3u6obw'&gt;了解更多&lt;/a&gt;\"/>" +
+                        "</rules><complex-value><field id=\"p-22370\" name=\"书刊种类\" type=\"singleCheck\"><value>20213</value></field>" +
+                        "</complex-value></field>" +
                         "<field id=\"globalStock\" name=\"采购地\" type=\"complex\"><rules><rule name=\"tipRule\" value=\"境外出版物代购类商品或服务属平台禁止发布的信息，&lt;a href='https://rule.taobao.com/detail-1077.htm?spm=a2177.7231205.0.0.153417eavsdJtc#6' target='_blank'&gt;点击查看详情&lt;/a&gt;\"/><rule name=\"requiredRule\" value=\"true\"/><rule name=\"readOnlyRule\" value=\"true\"/></rules><complex-value>" +
                         "<field id=\"globalStockNav\" name=\"采购地\" type=\"singleCheck\"><value>0</value></field></complex-value><fields><field id=\"stockType\" name=\"库存类型\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/><rule name=\"disableRule\" value=\"true\"><depend-group operator=\"and\"><depend-express fieldId=\"globalStockNav\" value=\"1\" symbol=\"!=\"/></depend-group></rule></rules><options><option displayName=\"现货（可快速发货）\" value=\"4738\" readonly=\"false\"/><option displayName=\"非现货（无现货，需采购）\" value=\"4674\" readonly=\"false\"/></options><value>4738</value></field></fields></field>" +
                         "<field id=\"departurePlace\" name=\"发货地\" type=\"singleCheck\"><rules><rule name=\"disableRule\" value=\"true\"><depend-group operator=\"and\"><depend-express fieldId=\"globalStockNav\" value=\"1\" symbol=\"!=\"/></depend-group></rule><rule name=\"tipRule\" value=\"&lt;div&gt;&lt;div&gt;如发布宝贝需要展示海外直邮标识，保证全链路的物流信息完整，并符合平台的展示要求，在商品发布后，请到卖家中心－淘宝服务加入 海外直邮服务。&lt;br&gt;若您已签署服务合约，您可在卖家中心－淘宝服务 &lt;a href='https://xiaobao.taobao.com/service/itemManager.htm?spm=a215o.7394214.1.2.ksWzTq' target='_blank'&gt;服务商品管理&lt;/a&gt;，为符合服务承诺的商品添加海外直邮服务协议。&lt;br&gt;若您未签署服务合约，您可在卖家中心－淘宝服务 &lt;a href='https://xiaobao.taobao.com/service/serviceList.htm?spm=a215o.7394217.0.0.6fggRl' target='_blank'&gt;加入服务－海外直邮服务&lt;/a&gt;，签署海外直邮服务合约。&lt;/div&gt;&lt;/div&gt;\"><depend-group operator=\"and\"><depend-express fieldId=\"departurePlace\" value=\"1\" symbol=\"==\"/></depend-group></rule></rules><options><option displayName=\"中国内地（大陆）\" value=\"0\" readonly=\"false\"/><option displayName=\"中国港澳台地区及其他国家和地区\" value=\"1\" readonly=\"false\"/></options><value>0</value></field>" +
@@ -150,17 +161,20 @@ public class BookPushListener {
                         "<field id=\"sevenDayNotSupport\" name=\"服务承诺：该类商品，不支持【七天退货】服务\" type=\"singleCheck\"><rules><rule name=\"tipRule\" value=\" 承诺更好服务可通过【&lt;a href='//xiaobao.taobao.com/service/serviceList.htm' target='_blank'&gt;交易合约&lt;/a&gt;】设置\"/><rule name=\"readOnlyRule\" value=\"true\"/></rules><value>true</value><options><option displayName=\"是\" value=\"true\"/><option displayName=\"否\" value=\"false\"/></options></field>" +
                         "<field id=\"startTime\" name=\"上架时间\" type=\"singleCheck\"><value>"+pushTaskDto.getIsPush()+"</value></field></itemSchema>";
                 req.setSchema(schema);
-                req.setPropId(20000L);
-                AlibabaItemPublishPropsGetResponse rsp = null;
+                AlibabaItemPublishSubmitResponse rsp = null;
                 try {
                     rsp = client.execute(req, sessionKey);
                 } catch (ApiException e) {
                     e.printStackTrace();
                 }
                 System.out.println(rsp.getBody());
-                n.setStatus(2);
+                BookInfo bookInfo = new BookInfo();
+                bookInfo.setId(n.getId());
+                bookInfo.setStatus(2);
+                bookInfo.setUserId(n.getUserId());
+                nInfo.add(bookInfo);
             });
-            iBookInfoService.updateBatchById(bookList);
+            iBookInfoService.updateBatchById(nInfo);
             if(bookList.size()<50){
                 break;
             }
@@ -181,6 +195,7 @@ public class BookPushListener {
         CommonRequest<BookInfo> request = new CommonRequest<>();
         request.setRequestData(info);
         request.setPage(page);
+        request.setUserId(userId);
         return iBookInfoService.getPageList(request).getRecords();
     }
 
