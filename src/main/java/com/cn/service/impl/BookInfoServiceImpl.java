@@ -36,7 +36,20 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
                     .eq(BookInfo::getUserId,request.getUserId())
                 .eq(!StringUtils.isEmpty(r.getStatus()),BookInfo::getStatus,r.getStatus())
                 .eq(!StringUtils.isEmpty(r.getPullId()),BookInfo::getPullId,r.getPullId())
+                .orderByAsc(BookInfo::getId)
                 );
         return bookInfoMapper.selectPage(page,queryWrapper);
+    }
+
+    @Override
+    public int count(BookInfo info) {
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(BookInfo::getUserId,info.getUserId())
+                .eq(!StringUtils.isEmpty(info.getStatus()),BookInfo::getStatus,info.getStatus())
+                .eq(!StringUtils.isEmpty(info.getPullId()),BookInfo::getPullId,info.getPullId());
+
+        return bookInfoMapper.selectCount(queryWrapper);
+
     }
 }

@@ -60,7 +60,7 @@ public class TaobaoService {
      */
     @Cacheable(cacheNames = "sellercat",key = "#userId")
     public List<SellerCat> getSellerCat(Long userId){
-        String sessionKey = redisTemplate.opsForValue().get("taobao_"+userId).toString();
+        String sessionKey = (String) redisTemplate.opsForValue().get("taobao_key_"+userId);
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
         SellercatsListGetRequest req = new SellercatsListGetRequest();
         req.setFields("cid,name");
@@ -79,7 +79,7 @@ public class TaobaoService {
      */
     @Cacheable(cacheNames = "postfee",key = "#userId")
     public List<DeliveryTemplate> getPostFeeTemplate(Long userId){
-        String sessionKey = redisTemplate.opsForValue().get("taobao_"+userId).toString();
+        String sessionKey = (String)redisTemplate.opsForValue().get("taobao_key_"+userId);
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
         DeliveryTemplatesGetRequest req = new DeliveryTemplatesGetRequest();
         req.setFields("template_id,template_name,created,modified,supports,assumer,valuation,query_express,query_ems,query_cod,query_post");

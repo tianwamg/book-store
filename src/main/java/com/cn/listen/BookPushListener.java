@@ -98,7 +98,7 @@ public class BookPushListener {
 
 
     public void goodsPush(PushTaskDto pushTaskDto){
-        Object key = redisTemplate.opsForValue().get("taobao_"+pushTaskDto.getUserId());
+        Object key = redisTemplate.opsForValue().get("taobao_key_"+pushTaskDto.getUserId());
         if(key == null){
             return;
         }
@@ -109,7 +109,8 @@ public class BookPushListener {
         List<BookInfo> bookList = getBookList(current,50,pushTaskDto.getUserId(),pushTaskDto.getTaskId());
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
         List<BookInfo> nInfo = new ArrayList<>();
-        while (bookList !=null && bookList.size() >0){
+        //FIXME
+        for(int i = 0;i<pushTaskDto.getPushNum()/50;i++){
             nInfo.clear();
             bookList.parallelStream().forEach(n ->{
                 //处理水印
@@ -144,7 +145,7 @@ public class BookPushListener {
                         "<value>"+pushTaskDto.getTitle()+n.getTitle()+"</value></field>" +
                         "<field id=\"catProp\" name=\"类目属性\" type=\"complex\"><rules><rule name=\"tipRule\" value=\"若发布时遇到属性、属性值不能满足您提交商品的需求，请点击&lt;a href='https://cpv.taobao.com/report/categoryPropertyIssueReport.htm?categoryId=50010485' target='_blank'&gt;商品属性问题反馈&lt;/a&gt;\"/>" +
                         "<rule name=\"tipRule\" value=\"请根据实际情况填写产品的重要属性，填写属性越完整，越有可能影响搜索流量，越有机会被消费者购买。&lt;a target = '_blank' href='https://market.m.taobao.com/app/qn/toutiao-new/index-pc.html#/detail/10671889?_k=3u6obw'&gt;了解更多&lt;/a&gt;\"/>" +
-                        "</rules><complex-value><field id=\"p-22370\" name=\"书刊种类\" type=\"singleCheck\"><value>20213</value></field>" +
+                        "</rules><complex-value><field id=\"p-22370\" name=\"书刊种类\" type=\"singleCheck\"><value>"+pushTaskDto.getCat()+"</value></field>" +
                         "</complex-value></field>" +
                         "<field id=\"globalStock\" name=\"采购地\" type=\"complex\"><rules><rule name=\"tipRule\" value=\"境外出版物代购类商品或服务属平台禁止发布的信息，&lt;a href='https://rule.taobao.com/detail-1077.htm?spm=a2177.7231205.0.0.153417eavsdJtc#6' target='_blank'&gt;点击查看详情&lt;/a&gt;\"/><rule name=\"requiredRule\" value=\"true\"/><rule name=\"readOnlyRule\" value=\"true\"/></rules><complex-value>" +
                         "<field id=\"globalStockNav\" name=\"采购地\" type=\"singleCheck\"><value>0</value></field></complex-value><fields><field id=\"stockType\" name=\"库存类型\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/><rule name=\"disableRule\" value=\"true\"><depend-group operator=\"and\"><depend-express fieldId=\"globalStockNav\" value=\"1\" symbol=\"!=\"/></depend-group></rule></rules><options><option displayName=\"现货（可快速发货）\" value=\"4738\" readonly=\"false\"/><option displayName=\"非现货（无现货，需采购）\" value=\"4674\" readonly=\"false\"/></options><value>4738</value></field></fields></field>" +
@@ -178,9 +179,9 @@ public class BookPushListener {
             if(bookList.size()<50){
                 break;
             }
-            current++;
             bookList = getBookList(current,50,pushTaskDto.getUserId(), pushTaskDto.getTaskId());
         }
+        //发布成功后生成一条统计数据
     }
 
     //获取书籍信息

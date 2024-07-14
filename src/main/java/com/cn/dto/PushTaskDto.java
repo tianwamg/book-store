@@ -26,4 +26,6 @@ public class PushTaskDto implements Serializable {
     private int isNew;
     //是否发布;0：立即，2：仓库
     private int isPush;
+    //发布数量
+    private int pushNum;
 }

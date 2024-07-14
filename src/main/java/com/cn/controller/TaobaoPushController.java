@@ -38,8 +38,10 @@ public class TaobaoPushController {
      * 保存用户session
      * @return
      */
-    public ResultResponse saveSessionKey(@RequestBody CommonRequest request){
-        redisTemplate.opsForValue().set("taobao_"+request.getUserId(),request.getRequestData().toString(),7, TimeUnit.DAYS);
+    @PostMapping("/savekey")
+    public ResultResponse saveSessionKey(@RequestBody CommonRequest<String> request){
+
+        redisTemplate.opsForValue().set("taobao_key_"+request.getUserId(),request.getRequestData(),7, TimeUnit.DAYS);
         return ResultResponse.success("true");
     }
 
@@ -47,8 +49,9 @@ public class TaobaoPushController {
      * 获取用户session
      * @return
      */
+    @PostMapping("/getkey")
     public ResultResponse<String> getSessionKey(@RequestBody CommonRequest request){
-        String sessionKey = redisTemplate.opsForValue().get("taobao_"+request.getUserId()).toString();
+        String sessionKey = (String) redisTemplate.opsForValue().get("taobao_key_"+request.getUserId());
         return ResultResponse.success(sessionKey);
     }
 

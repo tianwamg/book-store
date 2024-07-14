@@ -17,4 +17,6 @@ public interface IBookInfoService extends IService<BookInfo> {
 
     public Page<BookInfo> getPageList(CommonRequest<BookInfo> request);
 
+    public int count(BookInfo info);
+
 }
