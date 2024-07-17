@@ -1,9 +1,11 @@
 package com.cn.controller;
 
+import com.cn.domain.SysUser;
 import com.cn.dto.PushTaskDto;
 import com.cn.dto.TaobaoCatDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
+import com.cn.service.ISysUerService;
 import com.cn.tbapi.SingletonClient;
 import com.cn.tbapi.TaobaoService;
 import com.taobao.api.DefaultTaobaoClient;
@@ -11,6 +13,7 @@ import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.DeliveryTemplate;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerCat;
+import com.taobao.api.domain.Shop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,13 +37,18 @@ public class TaobaoPushController {
     @Autowired
     TaobaoService taobaoService;
 
+    @Autowired
+    ISysUerService iSysUerService;
+
     /**
      * 保存用户session
      * @return
      */
     @PostMapping("/savekey")
     public ResultResponse saveSessionKey(@RequestBody CommonRequest<String> request){
-
+        //首先查询当前账号绑定店铺是否一致
+        Shop shop = taobaoService.getSellerInfo(request.getRequestData());
+        SysUser sysUser = iSysUerService.getById(request.getUserId());
         redisTemplate.opsForValue().set("taobao_key_"+request.getUserId(),request.getRequestData(),7, TimeUnit.DAYS);
         return ResultResponse.success("true");
     }

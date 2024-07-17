@@ -11,14 +11,9 @@ import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.DeliveryTemplate;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerCat;
-import com.taobao.api.request.DeliveryTemplatesGetRequest;
-import com.taobao.api.request.ItemcatsGetRequest;
-import com.taobao.api.request.PictureUploadRequest;
-import com.taobao.api.request.SellercatsListGetRequest;
-import com.taobao.api.response.DeliveryTemplatesGetResponse;
-import com.taobao.api.response.ItemcatsGetResponse;
-import com.taobao.api.response.PictureUploadResponse;
-import com.taobao.api.response.SellercatsListGetResponse;
+import com.taobao.api.domain.Shop;
+import com.taobao.api.request.*;
+import com.taobao.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,6 +30,20 @@ public class TaobaoService {
     @Autowired
     RedisTemplate redisTemplate;
 
+
+    @Cacheable(cacheNames = "shop",key = "#key")
+    public Shop getSellerInfo(String key){
+        TaobaoClient client = SingletonClient.INSTANCE.getClient();
+        ShopSellerGetRequest req = new ShopSellerGetRequest();
+        req.setFields("sid,title,pic_path");
+        ShopSellerGetResponse rsp = null;
+        try {
+            rsp = client.execute(req, key);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        return rsp.getShop();
+    }
 
     /**
      * 获取分类模版

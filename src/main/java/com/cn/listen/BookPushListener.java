@@ -215,21 +215,21 @@ public class BookPushListener {
         switch (print.getLocate()){
             case "content"://正面
                 Thumbnails.of(new URL(net))
-                        .size(li.getWidth(),li.getHeight())
+                        .forceSize(li.getWidth(),li.getHeight())
                         .watermark(Positions.CENTER,li,0.5f)
                         .outputQuality(1f)
                         .toFile(path);
                 break;
             case "leftTop"://左上
                 Thumbnails.of(new URL(net))
-                        .size(li.getWidth(),li.getHeight())
+                        .forceSize(li.getWidth(),li.getHeight())
                         .watermark(Positions.TOP_LEFT,li,0.5f)
                         .outputQuality(1f)
                         .toFile(path);
                 break;
             case "rightTop"://右上
                 Thumbnails.of(new URL(net))
-                        .size(li.getWidth(),li.getHeight())
+                        .forceSize(li.getWidth(),li.getHeight())
                         .watermark(Positions.TOP_RIGHT,li,0.5f)
                         .outputQuality(1f)
                         .toFile(path);
@@ -243,7 +243,7 @@ public class BookPushListener {
                 break;
             case "rightBottom"://右下
                 Thumbnails.of(new URL(net))
-                        .size(li.getWidth(),li.getHeight())
+                        .forceSize(li.getWidth(),li.getHeight())
                         .watermark(Positions.BOTTOM_RIGHT,li,0.5f)
                         .outputQuality(1f)
                         .toFile(path);
