@@ -33,7 +33,7 @@ public class BookInfoController {
     }
 
     @PostMapping("/delete")
-    public ResultResponse<Integer> delete(CommonRequest<BookInfo> request){
+    public ResultResponse<Integer> delete(@RequestBody CommonRequest<BookInfo> request){
         BookInfo bookInfo = request.getRequestData();
         bookInfo.setUserId(request.getUserId());
         return ResultResponse.success(iBookInfoService.delete(bookInfo));
