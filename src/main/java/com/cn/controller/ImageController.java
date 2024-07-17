@@ -22,12 +22,16 @@ public class ImageController {
         }
         String name = new Date().getTime()+"."+file.getOriginalFilename().split("\\.")[1];
         //TODO
-        String path = "D:\\waterprint\\"  +userId+ "\\"+ name;
+        StringBuilder path = new StringBuilder("D:\\waterprint\\"  +userId);
+        File f= new File(path.toString());
+        if(!f.exists()){
+            f.mkdirs();
+        }
         try {
-            file.transferTo(new File(path));
+            file.transferTo(new File(path.append("\\"+name).toString()));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ResultResponse.success(path);
+        return ResultResponse.success(path.toString());
     }
 }
