@@ -52,4 +52,14 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
         return bookInfoMapper.selectCount(queryWrapper);
 
     }
+
+    @Override
+    public int delete(BookInfo bookInfo) {
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(BookInfo::getUserId,bookInfo.getUserId())
+                .eq(BookInfo::getId,bookInfo.getId());
+        return bookInfoMapper.delete(queryWrapper);
+
+    }
 }

@@ -19,4 +19,6 @@ public interface IBookInfoService extends IService<BookInfo> {
 
     public int count(BookInfo info);
 
+    public int delete(BookInfo bookInfo);
+
 }

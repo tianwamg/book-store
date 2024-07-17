@@ -32,5 +32,12 @@ public class BookInfoController {
         return ResultResponse.success(iBookInfoService.getPageList(request));
     }
 
+    @PostMapping("/delete")
+    public ResultResponse<Integer> delete(CommonRequest<BookInfo> request){
+        BookInfo bookInfo = request.getRequestData();
+        bookInfo.setUserId(request.getUserId());
+        return ResultResponse.success(iBookInfoService.delete(bookInfo));
+
+    }
 }
 
