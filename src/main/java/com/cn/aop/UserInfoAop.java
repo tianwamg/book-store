@@ -33,7 +33,7 @@ public class UserInfoAop {
         MethodSignature methodSignature =  (MethodSignature)pjp.getSignature();
         HandlerMethod handlerMethod = new HandlerMethod(pjp.getTarget(),methodSignature.getMethod());
         String name = handlerMethod.getMethod().getName();
-        if(!name.equals("login") && !name.equals("register")){
+        if(!name.equals("login") || !name.equals("register")){
             MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
             fillParamValueWithId(methodParameters,pjp.getArgs());
         }
