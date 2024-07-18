@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.cn.dto.TaobaoCatDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
+import com.cn.util.Utils;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.FileItem;
@@ -17,10 +18,13 @@ import com.taobao.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Cacheable(cacheNames = "apitb")
 @Service
@@ -29,6 +33,9 @@ public class TaobaoService {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    TaobaoApiStat taobaoApiStat;
 
 
     @Cacheable(cacheNames = "shop",key = "#key")
@@ -39,6 +46,8 @@ public class TaobaoService {
         ShopSellerGetResponse rsp = null;
         try {
             rsp = client.execute(req, key);
+            //统计埋点
+            taobaoApiStat.sendApiStat();
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -58,6 +67,8 @@ public class TaobaoService {
         ItemcatsGetResponse rsp = null;
         try {
             rsp = client.execute(req);
+            //统计埋点
+            taobaoApiStat.sendApiStat();
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -76,6 +87,8 @@ public class TaobaoService {
         SellercatsListGetResponse rsp = null;
         try {
             rsp = client.execute(req, sessionKey);
+            //统计埋点
+            taobaoApiStat.sendApiStat();
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -95,6 +108,8 @@ public class TaobaoService {
         DeliveryTemplatesGetResponse rsp = null;
         try {
             rsp = client.execute(req, sessionKey);
+            //统计埋点
+            taobaoApiStat.sendApiStat();
         } catch (ApiException e) {
             e.printStackTrace();
         }

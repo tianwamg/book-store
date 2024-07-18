@@ -12,6 +12,8 @@ import com.cn.service.IBookInfoService;
 import com.cn.service.IPriceService;
 import com.cn.service.IWaterprintService;
 import com.cn.tbapi.SingletonClient;
+import com.cn.tbapi.TaobaoApiStat;
+import com.cn.tbapi.TaobaoService;
 import com.taobao.api.ApiException;
 import com.taobao.api.FileItem;
 import com.taobao.api.TaobaoClient;
@@ -50,6 +52,9 @@ public class BookPushListener {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    TaobaoApiStat taobaoApiStat;
 
     /**
      * 向淘宝推送书籍任务
@@ -313,6 +318,8 @@ public class BookPushListener {
         PictureUploadResponse rsp = null;
         try {
             rsp = client.execute(req, sessionKey);//6100402dfe1fb0bc8c2eb17198ec27fb71e78eee49336da2506614820
+            //统计埋点
+            taobaoApiStat.sendApiStat();
         } catch (ApiException e) {
             e.printStackTrace();
         }
