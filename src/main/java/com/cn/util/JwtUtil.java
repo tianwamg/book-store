@@ -22,7 +22,7 @@ public class JwtUtil {
         map.forEach(builder::withClaim);
         builder.withExpiresAt(calendar.getTime());
         String token = builder.sign(Algorithm.HMAC256(APP_SECRET));
-        return token;
+        return token.substring(token.length()-40);
     }
 
     public static DecodedJWT verify(String token){

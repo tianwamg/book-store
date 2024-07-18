@@ -38,7 +38,7 @@ public class PermissionControlller {
      */
     @PostMapping("/list")
     public ResultResponse<List<Menu>> list(@RequestBody CommonRequest<Permission> request){
-        List<Menu> list = iPermissionService.getMenuTreeList(request.getRequestData().getRoleId());
+        List<Menu> list = iPermissionService.getMenuTreeList(request.getRoleId());
         return ResultResponse.success(list);
     }
 }

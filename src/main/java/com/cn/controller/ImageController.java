@@ -21,7 +21,6 @@ public class ImageController {
             return ResultResponse.error("404","图片上传为空");
         }
         String name = new Date().getTime()+"."+file.getOriginalFilename().split("\\.")[1];
-        //TODO
         StringBuilder path = new StringBuilder("D:\\waterprint\\"  +userId);
         File f= new File(path.toString());
         if(!f.exists()){

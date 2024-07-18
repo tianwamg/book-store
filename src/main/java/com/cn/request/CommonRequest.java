@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class CommonRequest<T> implements Serializable {
 
     private Long userId;
+    private Integer roleId;
     private  T requestData;
     private Page page;
 
@@ -18,6 +19,14 @@ public class CommonRequest<T> implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Integer getRoleId(){
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId){
+        this.roleId = roleId;
     }
 
     public T getRequestData() {

@@ -96,7 +96,7 @@ public class LoginController {
             Map<String,String> map = new HashMap<>();
             map.put("userId",sysUser.getUserId().toString());
             map.put("roleId",sysUser.getRoleId().toString());
-            String token = JwtUtil.getToken(map).substring(0,40);
+            String token = JwtUtil.getToken(map);
             redisTemplate.opsForValue().set("login-"+token, JSON.toJSONString(sysUser));
             redisTemplate.expire("login-"+token, Duration.ofDays(7));
             Role role = iRoleService.getById(sysUser.getRoleId());

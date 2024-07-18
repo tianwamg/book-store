@@ -70,6 +70,7 @@ public class JWTInterceptor implements HandlerInterceptor {
                 throw new LoginException("用户会员已过期，请重新充值!");
             }
             request.setAttribute("userId",sysUser.getUserId());
+            request.setAttribute("roleId",sysUser.getRoleId());
             return true;
         }catch (Exception e){
             e.printStackTrace();

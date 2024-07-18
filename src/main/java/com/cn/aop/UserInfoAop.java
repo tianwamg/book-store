@@ -33,7 +33,7 @@ public class UserInfoAop {
         MethodSignature methodSignature =  (MethodSignature)pjp.getSignature();
         HandlerMethod handlerMethod = new HandlerMethod(pjp.getTarget(),methodSignature.getMethod());
         String name = handlerMethod.getMethod().getName();
-        if(!name.equals("login") || !name.equals("register")){
+        if(!name.equals("login") && !name.equals("register")){
             MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
             fillParamValueWithId(methodParameters,pjp.getArgs());
         }
@@ -49,7 +49,9 @@ public class UserInfoAop {
                 CommonRequest request = (CommonRequest) obj;
                 ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                 Long userId = (Long) servletRequestAttributes.getAttribute("userId",0);
+                Integer roleId = (Integer) servletRequestAttributes.getAttribute("roleId",0);
                 request.setUserId(userId);
+                request.setRoleId(roleId);
             }
         }
     }
