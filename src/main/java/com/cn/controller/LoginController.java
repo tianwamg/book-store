@@ -98,7 +98,7 @@ public class LoginController {
             map.put("roleId",sysUser.getRoleId().toString());
             String token = JwtUtil.getToken(map);
             redisTemplate.opsForValue().set("login-"+token, JSON.toJSONString(sysUser));
-            redisTemplate.expire("login-"+token, Duration.ofDays(7));
+            redisTemplate.expire("login-"+token, Duration.ofDays(1));
             Role role = iRoleService.getById(sysUser.getRoleId());
             SysUserDto sysUserDto = SysUserDto.builder()
                     .userId(sysUser.getUserId())
