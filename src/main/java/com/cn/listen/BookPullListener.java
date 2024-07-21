@@ -69,10 +69,7 @@ public class BookPullListener {
             pull.setStatus(2);
             iBookPullService.updateById(pull);
             System.out.println("receive1...complete");
-            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
         }
-
-
     }
 
     @RabbitListener(queues = "pullbook")
@@ -89,7 +86,6 @@ public class BookPullListener {
             pull.setStatus(2);
             iBookPullService.updateById(pull);
             System.out.println("receive2...complete");
-            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
         }
     }
 
@@ -107,9 +103,7 @@ public class BookPullListener {
             pull.setStatus(2);
             iBookPullService.updateById(pull);
             System.out.println("receive3...complete");
-            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
         }
-
     }
 
     @RabbitListener(queues = "pullbook")
@@ -126,7 +120,6 @@ public class BookPullListener {
             pull.setStatus(2);
             iBookPullService.updateById(pull);
             System.out.println("receive4...complete");
-            redisTemplate.delete("task_cancel_"+json.getInteger("taskId"));
         }
     }
 
