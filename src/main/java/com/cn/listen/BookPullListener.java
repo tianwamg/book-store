@@ -140,7 +140,7 @@ public class BookPullListener {
         if(cat.equals("all")){
             cat = null;
         }
-        SensitiveWordBs words = getSensitvieDBs(8571568672l);
+        SensitiveWordBs words = getSensitvieDBs(json.getLong("userId"));
         /*List<BookInfo> list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"),words);
         int page = 1;
         while (true){
@@ -164,7 +164,7 @@ public class BookPullListener {
         }*/
         List<BookInfo> list = new ArrayList<>();
         for(int i =1;i<5000;i++){
-             list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"),words);
+             list = reptile(json.getLong("storeId"),cat,i,json.getLong("userId"),json.getInteger("taskId"),words);
             if(list != null && list.size() >0){
                 iBookInfoService.saveBatch(list);
             }
