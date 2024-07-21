@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Component
@@ -163,10 +164,15 @@ public class BookPullListener {
             list = reptile(json.getLong("storeId"),cat,++page,json.getLong("userId"),json.getInteger("taskId"),words);
         }*/
         List<BookInfo> list = new ArrayList<>();
-        for(int i =1;i<5000;i++){
+        for(int i =1;i<1000;i++){
              list = reptile(json.getLong("storeId"),cat,i,json.getLong("userId"),json.getInteger("taskId"),words);
             if(list != null && list.size() >0){
                 iBookInfoService.saveBatch(list);
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         list = null;
@@ -214,7 +220,7 @@ public class BookPullListener {
                     BookInfo ninfo = new BookInfo();
                     ninfo.setTitle("拉取有误");
                     ninfo.setStatus(-2);
-                    list.add(ninfo);
+                    //list.add(ninfo);
                     return list ;
                 }
                 Elements blogList = blog.getElementsByClass("item clearfix");
@@ -246,9 +252,10 @@ public class BookPullListener {
                         bookInfo.setExtra(author);
 
                     }
-                    if(!words.contains(bookInfo.getTitle())) {
-                        list.add(bookInfo);
+                    if(words.contains(bookInfo.getTitle())) {
+                        bookInfo.setStatus(2);
                     }
+                    list.add(bookInfo);
                 }
             }
             httpClient.close();
