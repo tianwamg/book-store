@@ -252,10 +252,10 @@ public class BookPullListener {
                         bookInfo.setExtra(author);
 
                     }
-                    if(words.contains(bookInfo.getTitle())) {
-                        bookInfo.setStatus(2);
+                    if(!words.contains(bookInfo.getTitle())) {
+                        list.add(bookInfo);
                     }
-                    list.add(bookInfo);
+
                 }
             }
             httpClient.close();
