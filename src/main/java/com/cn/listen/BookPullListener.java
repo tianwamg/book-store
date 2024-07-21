@@ -214,7 +214,7 @@ public class BookPullListener {
                     BookInfo ninfo = new BookInfo();
                     ninfo.setTitle("拉取有误");
                     ninfo.setStatus(-2);
-                    list.add(ninfo);
+                    //list.add(ninfo);
                     return list ;
                 }
                 Elements blogList = blog.getElementsByClass("item clearfix");
