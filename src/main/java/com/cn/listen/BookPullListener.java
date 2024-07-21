@@ -11,6 +11,7 @@ import com.cn.service.ISensitiveService;
 import com.cn.util.IPRandomUtil;
 import com.github.houbb.sensitive.word.api.IWordDeny;
 import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
+import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -231,7 +232,7 @@ public class BookPullListener {
                     bookInfo.setQuality(element.select("div.quality").text());
                     if(author == null || author.equals("")){
                         List<String> info = element.select("div.normal-item span.normal-text").eachText();
-                        bookInfo.setAuthor(info.get(0));
+                        bookInfo.setAuthor(info.get(0).trim());
                         if(info.size()>1) {
                             bookInfo.setPublisher(info.get(1));
                         }
@@ -245,10 +246,10 @@ public class BookPullListener {
                         bookInfo.setExtra(author);
 
                     }
-                    if(!words.contains(bookInfo.getTitle())) {
-                        list.add(bookInfo);
+                    if(SensitiveWordHelper.contains(bookInfo.getTitle()) ||words.contains(bookInfo.getTitle())) {
+                        bookInfo.setStatus(2);
                     }
-
+                    list.add(bookInfo);
                 }
             }
             httpClient.close();
