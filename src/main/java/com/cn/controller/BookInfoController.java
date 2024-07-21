@@ -7,6 +7,7 @@ import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
 import com.cn.service.IBookInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,12 @@ public class BookInfoController {
         bookInfo.setUserId(request.getUserId());
         return ResultResponse.success(iBookInfoService.delete(bookInfo));
 
+    }
+
+    @PostMapping("/upload")
+    public ResultResponse upload(){
+        iBookInfoService.upload();
+        return ResultResponse.success(null);
     }
 }
 

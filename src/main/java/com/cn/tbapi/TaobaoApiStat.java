@@ -22,7 +22,7 @@ public class TaobaoApiStat {
         Map<String,String> map = new HashMap<>();
         map.put("appKey","21310116");
         map.put("method","taobao.vas.subscribe.get");
-        map.put("name","test1");
+        map.put("name","jdhstore");
         map.put("isFail","0");
         Utils.doHttpRequest(url,map);
     }

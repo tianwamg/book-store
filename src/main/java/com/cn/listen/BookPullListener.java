@@ -1,11 +1,16 @@
 package com.cn.listen;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.cn.common.Page;
 import com.cn.domain.BookInfo;
 import com.cn.domain.BookPull;
+import com.cn.domain.Sensitive;
 import com.cn.service.IBookInfoService;
 import com.cn.service.IBookPullService;
+import com.cn.service.ISensitiveService;
 import com.cn.util.IPRandomUtil;
+import com.github.houbb.sensitive.word.api.IWordDeny;
+import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -26,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class BookPullListener {
@@ -37,6 +43,9 @@ public class BookPullListener {
 
     @Autowired
     IBookPullService iBookPullService;
+
+    @Autowired
+    ISensitiveService iSensitiveService;
 
     @Autowired
     RedisTemplate redisTemplate;
@@ -131,7 +140,8 @@ public class BookPullListener {
         if(cat.equals("all")){
             cat = null;
         }
-        List<BookInfo> list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"));
+        SensitiveWordBs words = getSensitvieDBs(8571568672l);
+        /*List<BookInfo> list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"),words);
         int page = 1;
         while (true){
             if(list !=null ){
@@ -150,14 +160,22 @@ public class BookPullListener {
                 }
 
             }
-            list = reptile(json.getLong("storeId"),cat,++page,json.getLong("userId"),json.getInteger("taskId"));
+            list = reptile(json.getLong("storeId"),cat,++page,json.getLong("userId"),json.getInteger("taskId"),words);
+        }*/
+        List<BookInfo> list = new ArrayList<>();
+        for(int i =1;i<5000;i++){
+             list = reptile(json.getLong("storeId"),cat,1,json.getLong("userId"),json.getInteger("taskId"),words);
+            if(list != null && list.size() >0){
+                iBookInfoService.saveBatch(list);
+            }
         }
+        list = null;
     }
 
     /**
      * 爬取网络内容
      */
-    public List<BookInfo> reptile(Long storeId,String cat,int page,Long userId,int pullId){
+    public List<BookInfo> reptile(Long storeId,String cat,int page,Long userId,int pullId,SensitiveWordBs words){
         /**
          * 孔夫子书籍爬取列表有两种不同格式，爬取时需要针对不同情况做不同解析
          */
@@ -228,7 +246,9 @@ public class BookPullListener {
                         bookInfo.setExtra(author);
 
                     }
-                    list.add(bookInfo);
+                    if(!words.contains(bookInfo.getTitle())) {
+                        list.add(bookInfo);
+                    }
                 }
             }
             httpClient.close();
@@ -237,5 +257,33 @@ public class BookPullListener {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public SensitiveWordBs getSensitvieDBs(Long userId){
+        return SensitiveWordBs.newInstance()
+                .wordDeny(new IWordDeny() {
+                    @Override
+                    public List<String> deny() {
+                        Page page = new Page();
+                        int current =1 ;
+                        page.setPageSize(50);
+                        page.setCurrent(current);
+                        Sensitive sensitive = new Sensitive();
+                        sensitive.setUserId(userId);
+                        sensitive.setStatus(1);
+                        List<Sensitive> list = iSensitiveService.getPageList(page,sensitive).getRecords();
+                        List<String> wordsList = new ArrayList<>();
+                        while (list != null && list.size() >0){
+                            wordsList.addAll(list.parallelStream().map(s -> s.getWord()).collect(Collectors.toList()));
+                            current ++;
+                            page.setCurrent(current);
+                            list = iSensitiveService.getPageList(page,sensitive).getRecords();
+                        }
+                        return wordsList;
+                    }
+                })
+                .ignoreChineseStyle(true)
+                .ignoreEnglishStyle(true)
+                .init();
     }
 }

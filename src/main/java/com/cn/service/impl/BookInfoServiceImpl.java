@@ -7,11 +7,14 @@ import com.cn.domain.BookInfo;
 import com.cn.mapper.BookInfoMapper;
 import com.cn.request.CommonRequest;
 import com.cn.service.IBookInfoService;
+import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -60,6 +63,12 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
                 .eq(BookInfo::getUserId,bookInfo.getUserId())
                 .eq(BookInfo::getId,bookInfo.getId());
         return bookInfoMapper.delete(queryWrapper);
+
+    }
+
+    @Async
+    @Override
+    public void upload() {
 
     }
 }
