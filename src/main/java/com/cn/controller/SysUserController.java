@@ -73,7 +73,7 @@ public class SysUserController {
     @PostMapping("/active")
     public ResultResponse<Integer> active(@RequestBody CommonRequest<SysUser> request){
         SysUser sysUser = request.getRequestData();
-        sysUser.setRoleId(3);
+        //sysUser.setRoleId(3);
         sysUser.setStatus(1);
         int result = iSysUerServicel.updateUserInfo(sysUser);
         return ResultResponse.success(result);
