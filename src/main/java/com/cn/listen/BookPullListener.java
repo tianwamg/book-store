@@ -284,6 +284,7 @@ public class BookPullListener {
                 })
                 .ignoreChineseStyle(true)
                 .ignoreEnglishStyle(true)
+                .enableWordCheck(false)
                 .init();
     }
 }
