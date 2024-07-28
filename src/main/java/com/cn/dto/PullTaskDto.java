@@ -9,6 +9,6 @@ import java.util.Date;
 public class PullTaskDto implements Serializable {
 
     private Long userId;
-    private Long storeId;
+    private String storeId;
     private String category;
 }

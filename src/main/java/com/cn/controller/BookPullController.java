@@ -41,27 +41,30 @@ public class BookPullController {
     public ResultResponse buildTask(@RequestBody CommonRequest<PullTaskDto> request){
         //创建一个任务指令
         PullTaskDto pullTaskDto = request.getRequestData();
+        String[] storeIds = pullTaskDto.getStoreId().split(",");
+        for(String id :storeIds) {
 
-        //封装消息指令
-        JSONObject object = new JSONObject();
-        object.put("storeId",pullTaskDto.getStoreId());
-        object.put("cat",pullTaskDto.getCategory());
-        object.put("userId",request.getUserId());
+            //封装消息指令
+            JSONObject object = new JSONObject();
+            object.put("storeId", id);
+            object.put("cat", pullTaskDto.getCategory());
+            object.put("userId", request.getUserId());
 
-        BookPull pull = BookPull.builder()
-                .name("任务来源书店:"+pullTaskDto.getStoreId())
-                .remark(object.toJSONString())
-                .status(0)
-                .userId(request.getUserId())
-                .build();
-        iBookPullService.save(pull);
-        //将该指令放入mq
-        //pull.getId();
-        try {
-            object.put("taskId",pull.getId());
-            rabbitTemplate.convertAndSend("pullbook", object.toJSONString());
-        }catch (Exception e){
-            e.printStackTrace();
+            BookPull pull = BookPull.builder()
+                    .name("任务来源书店:" + id)
+                    .remark(object.toJSONString())
+                    .status(0)
+                    .userId(request.getUserId())
+                    .build();
+            iBookPullService.save(pull);
+            //将该指令放入mq
+            //pull.getId();
+            try {
+                object.put("taskId", pull.getId());
+                rabbitTemplate.convertAndSend("pullbook", object.toJSONString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         //返回待进行结果
         return ResultResponse.success("书籍拉取任务即将开始");
