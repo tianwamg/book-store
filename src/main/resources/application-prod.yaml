@@ -18,7 +18,7 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       username: root
       password: qwer1234
-      url: jdbc:mysql://127.0.0.1:3306/b_store?useSSL=false&serverTimezone=UTC
+      url: jdbc:mysql://127.0.0.1:30001/b_store?useSSL=false&serverTimezone=UTC
     sharding:
       tables:
         sensitive:
