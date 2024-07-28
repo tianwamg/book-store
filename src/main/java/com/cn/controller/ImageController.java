@@ -33,7 +33,7 @@ public class ImageController {
             f.mkdirs();
         }
         try {
-            file.transferTo(new File(path.append("\\"+name).toString()));
+            file.transferTo(new File(path.append("/"+name).toString()));
         } catch (IOException e) {
             e.printStackTrace();
         }
