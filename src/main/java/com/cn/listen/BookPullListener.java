@@ -246,10 +246,9 @@ public class BookPullListener {
                         bookInfo.setExtra(author);
 
                     }
-                    if(SensitiveWordHelper.contains(bookInfo.getTitle()) ||words.contains(bookInfo.getTitle())) {
-                        bookInfo.setStatus(2);
+                    if(!SensitiveWordHelper.contains(bookInfo.getTitle()) && !words.contains(bookInfo.getTitle())) {
+                        list.add(bookInfo);
                     }
-                    list.add(bookInfo);
                 }
             }
             httpClient.close();
