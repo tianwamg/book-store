@@ -21,6 +21,8 @@ public interface IBookInfoService extends IService<BookInfo> {
 
     public int delete(BookInfo bookInfo);
 
+    public int updateStatus(BookInfo bookInfo);
+
     public void upload();
 
 }

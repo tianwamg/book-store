@@ -61,16 +61,16 @@ public class BookPushListener {
      * @param msg
      */
     @RabbitListener(queues = "pushbook")
-    public void receivePushBookMsg1(String msg){
-        System.out.println("书籍发布任务开始...msg:..."+msg);
+    public void receivePushBookMsg1(String msg) throws Exception {
+        System.out.println("书籍发布任务开始1...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
         PushTaskDto pushTaskDto = JSONObject.parseObject(msg,PushTaskDto.class);
         goodsPush(pushTaskDto);
     }
 
     @RabbitListener(queues = "pushbook")
-    public void receivePushBookMsg2(String msg){
-        System.out.println("书籍发布任务开始...msg:..."+msg);
+    public void receivePushBookMsg2(String msg) throws Exception {
+        System.out.println("书籍发布任务开始2...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
         PushTaskDto pushTaskDto = JSONObject.parseObject(msg,PushTaskDto.class);
         goodsPush(pushTaskDto);
@@ -78,22 +78,22 @@ public class BookPushListener {
     }
 
     public void receivePushBookMsg3(String msg){
-        System.out.println("书籍发布任务开始...msg:..."+msg);
+        System.out.println("书籍发布任务开始3...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
     }
 
     public void receivePushBookMsg4(String msg){
-        System.out.println("书籍发布任务开始...msg:..."+msg);
+        System.out.println("书籍发布任务开始4...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
     }
 
     public void receivePushBookMsg5(String msg){
-        System.out.println("书籍发布任务开始...msg:..."+msg);
+        System.out.println("书籍发布任务开始5...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
     }
 
-    public void receivePushBookMsg6(String msg){
-        System.out.println("书籍发布任务开始...msg:..."+msg);
+    public void receivePushBookMsg6(String msg) throws Exception {
+        System.out.println("书籍发布任务开始6...msg:..."+msg);
         JSONObject json = JSONObject.parseObject(msg);
         PushTaskDto pushTaskDto = JSONObject.parseObject(msg,PushTaskDto.class);
         goodsPush(pushTaskDto);
@@ -102,27 +102,41 @@ public class BookPushListener {
 
 
 
-    public void goodsPush(PushTaskDto pushTaskDto){
+    public void goodsPush(PushTaskDto pushTaskDto) throws Exception{
+        System.out.println("push task 1....");
         Object key = redisTemplate.opsForValue().get("taobao_key_"+pushTaskDto.getUserId());
         if(key == null){
             return;
         }
+        System.out.println("push task 2....");
         String sessionKey = key.toString();
         List<Price> prices = getPrices(pushTaskDto.getUserId());
         Waterprint print = getPrints(pushTaskDto.getUserId());
-        int current = 0 ;
-        List<BookInfo> bookList = getBookList(current,50,pushTaskDto.getUserId(),pushTaskDto.getTaskId());
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
         List<BookInfo> nInfo = new ArrayList<>();
-        int total = (int)Math.ceil(pushTaskDto.getPushNum()/50);
+        int total = (int)Math.ceil((double) pushTaskDto.getPushNum()/50);
         int pageSize = 50;
         //FIXME
+        System.out.println("push task 3....");
         for(int i = 0;i<total;i++){
+            System.out.println("push task i:...."+i);
             nInfo.clear();
+            if(i == total-1){
+                pageSize = pushTaskDto.getPushNum()%50;
+            }
+            List<BookInfo> bookList = getBookList(i,pageSize,pushTaskDto.getUserId(), pushTaskDto.getTaskId());
+            System.out.println("push task size:...."+bookList.size());
+            if(pushTaskDto.getTitle()==null){
+                pushTaskDto.setTitle("");
+            }
             bookList.parallelStream().forEach(n ->{
                 //处理水印
                 String path = "E:\\taobao\\"+pushTaskDto.getUserId()+"\\"+pushTaskDto.getTaskId()+n.getId()+".jpg";
-                path = "/Users/pandawong/Desktop/"+n.getPullId()+"-"+n.getId()+".jpg";
+                path = "/var/img/goodsprint/"+n.getUserId()+"/"+n.getPullId()+"/"+n.getId()+".jpg";
+                File file = new File("/var/img/goodsprint/"+n.getUserId()+"/"+n.getPullId());
+                if(!file.exists()){
+                    file.mkdirs();
+                }
                 try {
                     imgwater(n.getImg(),print,path);
                 } catch (IOException e) {
@@ -136,7 +150,7 @@ public class BookPushListener {
                         }else {
                             n.setPrice(n.getPrice().add(p.getAddPrice()));
                         }
-                        continue;
+                        break;
                     }
                 }
                 //上传图片
@@ -161,12 +175,12 @@ public class BookPushListener {
                         "<field id=\"price\" name=\"一口价\" type=\"input\"><value>"+n.getPrice().doubleValue()+"</value></field>" +
                         "<field id=\"quantity\" name=\"总库存\" type=\"input\"><value>"+pushTaskDto.getStock()+"</value></field>" +
                         "<field id=\"images\" name=\"1:1主图\" type=\"complex\"><complex-value><field id=\"images_0\" name=\"1:1主图\" type=\"input\"><value>"+pic+"</value></field></complex-value></field>" +
-                        "<field id=\"desc\" name=\"PC端详情描述\" type=\"input\"><value>"+pushTaskDto.getDesc()+"\n"+n.getExtra()+"</value></field>" +
+                        "<field id=\"desc\" name=\"PC端详情描述\" type=\"input\"><value>"+pushTaskDto.getDesc()+"\\n"+n.getShopid()+"/"+n.getItemid()+"\\n"+n.getExtra()+"</value></field>" +
                         "<field id=\"wirelessDesc\" name=\"手机端详情描述\" type=\"input\"><value>"+pushTaskDto.getDesc()+"\n"+n.getExtra()+"</value></field>" +
                         "<field id=\"shopcat\" name=\"店铺中分类\" type=\"multiCheck\"><value>"+pushTaskDto.getSeller()+"</value></field>" +
                         "<field id=\"subStock\" name=\"拍下减库存\" type=\"singleCheck\"><value>1</value></field>" +
                         "<field id=\"tbExtractWay\" name=\"运费\" type=\"complex\"><complex-value><field id=\"template\" name=\"运费模板\" type=\"input\"><value>"+pushTaskDto.getFeeId()+"</value></field></complex-value></field>" +
-                        "<field id=\"sevenDayNotSupport\" name=\"服务承诺：该类商品，不支持【七天退货】服务\" type=\"singleCheck\"><rules><rule name=\"tipRule\" value=\" 承诺更好服务可通过【&lt;a href='//xiaobao.taobao.com/service/serviceList.htm' target='_blank'&gt;交易合约&lt;/a&gt;】设置\"/><rule name=\"readOnlyRule\" value=\"true\"/></rules><value>true</value><options><option displayName=\"是\" value=\"true\"/><option displayName=\"否\" value=\"false\"/></options></field>" +
+                        "<field id=\"sevenDayNotSupport\" name=\"服务承诺：该类商品，不支持【七天退货】服务\" type=\"singleCheck\"><rules><rule name=\"tipRule\" value=\" 承诺更好服务可通过【&lt;a href='//xiaobao.taobao.com/service/serviceList.htm' target='_blank'&gt;交易合约&lt;/a&gt;】设置\"/><rule name=\"readOnlyRule\" value=\"true\"/></rules><value>false</value><options><option displayName=\"是\" value=\"true\"/><option displayName=\"否\" value=\"false\"/></options></field>" +
                         "<field id=\"startTime\" name=\"上架时间\" type=\"singleCheck\"><value>"+pushTaskDto.getIsPush()+"</value></field></itemSchema>";
                 req.setSchema(schema);
                 AlibabaItemPublishSubmitResponse rsp = null;
@@ -180,14 +194,8 @@ public class BookPushListener {
                 bookInfo.setId(n.getId());
                 bookInfo.setStatus(2);
                 bookInfo.setUserId(n.getUserId());
-                nInfo.add(bookInfo);
+                iBookInfoService.updateStatus(bookInfo);
             });
-            if(i == total-1){
-                pageSize = pushTaskDto.getPushNum()%50;
-            }
-            iBookInfoService.updateBatchById(nInfo);
-
-            bookList = getBookList(current,pageSize,pushTaskDto.getUserId(), pushTaskDto.getTaskId());
         }
     }
 
@@ -198,7 +206,7 @@ public class BookPushListener {
         page.setPageSize(pageSize);
         BookInfo info = new BookInfo();
         info.setUserId(userId);
-        info.setPullId(pullId);
+        //info.setPullId(pullId);
         info.setStatus(1);
         CommonRequest<BookInfo> request = new CommonRequest<>();
         request.setRequestData(info);

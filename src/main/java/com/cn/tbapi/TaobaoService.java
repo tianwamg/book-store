@@ -46,11 +46,12 @@ public class TaobaoService {
         ShopSellerGetResponse rsp = null;
         try {
             rsp = client.execute(req, key);
-            //统计埋点
-            taobaoApiStat.sendApiStat();
+
         } catch (ApiException e) {
             e.printStackTrace();
         }
+        //统计埋点
+        taobaoApiStat.sendApiStat();
         return rsp.getShop();
     }
 
@@ -67,11 +68,11 @@ public class TaobaoService {
         ItemcatsGetResponse rsp = null;
         try {
             rsp = client.execute(req);
-            //统计埋点
-            taobaoApiStat.sendApiStat();
         } catch (ApiException e) {
             e.printStackTrace();
         }
+        //统计埋点
+        taobaoApiStat.sendApiStat();
         return rsp.getItemCats();
     }
 
@@ -87,11 +88,12 @@ public class TaobaoService {
         SellercatsListGetResponse rsp = null;
         try {
             rsp = client.execute(req, sessionKey);
-            //统计埋点
-            taobaoApiStat.sendApiStat();
+
         } catch (ApiException e) {
             e.printStackTrace();
         }
+        //统计埋点
+        taobaoApiStat.sendApiStat();
         return rsp.getSellerCats();
     }
 
@@ -108,11 +110,12 @@ public class TaobaoService {
         DeliveryTemplatesGetResponse rsp = null;
         try {
             rsp = client.execute(req, sessionKey);
-            //统计埋点
-            taobaoApiStat.sendApiStat();
+
         } catch (ApiException e) {
             e.printStackTrace();
         }
+        //统计埋点
+        taobaoApiStat.sendApiStat();
         return rsp.getDeliveryTemplates();
     }
 

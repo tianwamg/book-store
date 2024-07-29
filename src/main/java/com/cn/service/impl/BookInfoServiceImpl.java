@@ -1,9 +1,11 @@
 package com.cn.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cn.domain.BookInfo;
+import com.cn.domain.Sensitive;
 import com.cn.mapper.BookInfoMapper;
 import com.cn.request.CommonRequest;
 import com.cn.service.IBookInfoService;
@@ -13,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.awt.print.Book;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -64,6 +67,15 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
                 .eq(BookInfo::getId,bookInfo.getId());
         return bookInfoMapper.delete(queryWrapper);
 
+    }
+
+    @Override
+    public int updateStatus(BookInfo bookInfo){
+        UpdateWrapper<BookInfo> updateWrapper= new UpdateWrapper<>();
+        updateWrapper.lambda()
+                .eq(BookInfo::getId,bookInfo.getId())
+                .eq(BookInfo::getUserId,bookInfo.getUserId());
+        return bookInfoMapper.update(bookInfo,updateWrapper);
     }
 
     @Async
