@@ -1,5 +1,6 @@
 package com.cn.controller;
 
+import com.cn.anno.PassToken;
 import com.cn.domain.SysUser;
 import com.cn.dto.PushTaskDto;
 import com.cn.dto.TaobaoCatDto;
@@ -8,12 +9,15 @@ import com.cn.response.ResultResponse;
 import com.cn.service.ISysUerService;
 import com.cn.tbapi.SingletonClient;
 import com.cn.tbapi.TaobaoService;
+import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.DeliveryTemplate;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerCat;
 import com.taobao.api.domain.Shop;
+import com.taobao.api.request.AlibabaItemPublishSchemaGetRequest;
+import com.taobao.api.response.AlibabaItemPublishSchemaGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,5 +99,21 @@ public class TaobaoPushController {
     @PostMapping("/subcat")
     public ResultResponse<List<TaobaoCatDto>> getSubCat(){
         return ResultResponse.success(taobaoService.getCats());
+    }
+
+    @PassToken
+    @PostMapping("/schema")
+    public void schema() throws ApiException {
+        TaobaoClient client = SingletonClient.INSTANCE.getClient();
+        AlibabaItemPublishSchemaGetRequest req = new AlibabaItemPublishSchemaGetRequest();
+        req.setImages("https://img.alicdn.com/imgextra/i1/2506614820/O1CN01GrtC7i1lTc0aq9yzf_!!2506614820.jpg");
+        req.setItemType("b");
+        req.setBizType("taobao");
+        req.setMarket("taobao");
+        req.setCatId(50010485l);
+        //req.setSpuId(32323L);
+        //req.setBarcode("6932529211107");
+        AlibabaItemPublishSchemaGetResponse rsp = client.execute(req, "6101a02cc21b745ZZ151123d6051766561516d40159ef3a3307647498");
+        System.out.println(rsp.getBody());
     }
 }
