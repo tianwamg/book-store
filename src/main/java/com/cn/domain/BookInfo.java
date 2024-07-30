@@ -95,6 +95,10 @@ public class BookInfo implements Serializable {
      */
     private String extra;
 
+    public Long taobaoId;
+
+    public Long catId;
+
     /**
      * 创建时间
      */

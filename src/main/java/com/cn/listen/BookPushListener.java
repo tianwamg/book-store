@@ -175,8 +175,8 @@ public class BookPushListener {
                         "<field id=\"price\" name=\"一口价\" type=\"input\"><value>"+n.getPrice().doubleValue()+"</value></field>" +
                         "<field id=\"quantity\" name=\"总库存\" type=\"input\"><value>"+pushTaskDto.getStock()+"</value></field>" +
                         "<field id=\"images\" name=\"1:1主图\" type=\"complex\"><complex-value><field id=\"images_0\" name=\"1:1主图\" type=\"input\"><value>"+pic+"</value></field></complex-value></field>" +
-                        "<field id=\"desc\" name=\"PC端详情描述\" type=\"input\"><value>"+pushTaskDto.getDesc()+"\\n"+n.getShopid()+"/"+n.getItemid()+"\\n"+n.getExtra()+"</value></field>" +
-                        "<field id=\"wirelessDesc\" name=\"手机端详情描述\" type=\"input\"><value>"+pushTaskDto.getDesc()+"\n"+n.getExtra()+"</value></field>" +
+                        "<field id=\"desc\" name=\"PC端详情描述\" type=\"input\"><value>"+pushTaskDto.getDesc()+"/n"+n.getShopid()+"/"+n.getItemid()+"/n"+n.getExtra()+"</value></field>" +
+                        "<field id=\"wirelessDesc\" name=\"手机端详情描述\" type=\"input\"><value>"+pushTaskDto.getDesc()+"\\n"+n.getShopid()+"/"+n.getItemid()+"\n"+n.getExtra()+"</value></field>" +
                         "<field id=\"shopcat\" name=\"店铺中分类\" type=\"multiCheck\"><value>"+pushTaskDto.getSeller()+"</value></field>" +
                         "<field id=\"subStock\" name=\"拍下减库存\" type=\"singleCheck\"><value>1</value></field>" +
                         "<field id=\"tbExtractWay\" name=\"运费\" type=\"complex\"><complex-value><field id=\"template\" name=\"运费模板\" type=\"input\"><value>"+pushTaskDto.getFeeId()+"</value></field></complex-value></field>" +
@@ -186,14 +186,16 @@ public class BookPushListener {
                 AlibabaItemPublishSubmitResponse rsp = null;
                 try {
                     rsp = client.execute(req, sessionKey);
-                } catch (ApiException e) {
+                } catch (Exception e) {
                     //e.printStackTrace();
                 }
-                System.out.println(rsp.getBody());
+                //System.out.println(rsp.getBody());
                 BookInfo bookInfo = new BookInfo();
                 bookInfo.setId(n.getId());
                 bookInfo.setStatus(2);
                 bookInfo.setUserId(n.getUserId());
+                bookInfo.setTaobaoId(rsp.getItemId());
+                bookInfo.setCatId(pushTaskDto.getSeller());
                 iBookInfoService.updateStatus(bookInfo);
             });
         }
