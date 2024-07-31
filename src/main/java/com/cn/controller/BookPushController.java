@@ -3,6 +3,7 @@ package com.cn.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.cn.domain.BookInfo;
+import com.cn.dto.DeleteBookDto;
 import com.cn.dto.PushTaskDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
@@ -51,5 +52,13 @@ public class BookPushController {
 
     public ResultResponse up(){
         return null;
+    }
+
+    @PostMapping("/task/delete")
+    public ResultResponse delete(@RequestBody CommonRequest<DeleteBookDto> request){
+        DeleteBookDto deleteBookDto = request.getRequestData();
+        deleteBookDto.setUserId(request.getUserId());
+        rabbitTemplate.convertAndSend("deletebook",JSON.toJSONString(deleteBookDto));
+        return ResultResponse.success("书籍进入删除任务队列，即将开始...");
     }
 }

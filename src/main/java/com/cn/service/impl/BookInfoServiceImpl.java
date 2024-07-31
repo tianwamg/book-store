@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.awt.print.Book;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,7 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
                     .eq(BookInfo::getUserId,request.getUserId())
                 .eq(!StringUtils.isEmpty(r.getStatus()),BookInfo::getStatus,r.getStatus())
                 .eq(!StringUtils.isEmpty(r.getPullId()),BookInfo::getPullId,r.getPullId())
+                .like(!StringUtils.isEmpty(r.getTitle()),BookInfo::getTitle,r.getTitle())
                 .orderByAsc(BookInfo::getId)
                 );
         return bookInfoMapper.selectPage(page,queryWrapper);
@@ -82,5 +84,54 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
     @Override
     public void upload() {
 
+    }
+
+    @Override
+    public List<BookInfo> getStatusList(int current, int pageSize, BookInfo bookInfo) {
+        Page<BookInfo> page = new Page<>(current,pageSize);
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        Optional.ofNullable(bookInfo).ifPresent(r->
+                queryWrapper.lambda()
+                        .eq(BookInfo::getUserId,bookInfo.getUserId())
+                        .ge(!StringUtils.isEmpty(r.getStatus()),BookInfo::getStatus,r.getStatus())
+                        .eq(!StringUtils.isEmpty(r.getCatId()),BookInfo::getCatId,r.getCatId())
+                        .orderByAsc(BookInfo::getId)
+        );
+        return bookInfoMapper.selectPage(page,queryWrapper).getRecords();
+    }
+
+    @Override
+    public int statusCount(BookInfo info) {
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(BookInfo::getUserId,info.getUserId())
+                .ge(!StringUtils.isEmpty(info.getStatus()),BookInfo::getStatus,info.getStatus())
+                .eq(!StringUtils.isEmpty(info.getCatId()),BookInfo::getCatId,info.getCatId());
+        return bookInfoMapper.selectCount(queryWrapper);
+
+    }
+
+    @Override
+    public List<BookInfo> getNoCatList(int current,int pageSize,BookInfo bookInfo){
+        Page<BookInfo> page = new Page<>(current,pageSize);
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        Optional.ofNullable(bookInfo).ifPresent(r->
+                queryWrapper.lambda()
+                        .eq(BookInfo::getUserId,bookInfo.getUserId())
+                        .ge(!StringUtils.isEmpty(r.getStatus()),BookInfo::getStatus,r.getStatus())
+                        .notIn(!StringUtils.isEmpty(r.getCatId()),BookInfo::getCatId,r.getCatId())
+                        .orderByAsc(BookInfo::getId)
+        );
+        return bookInfoMapper.selectPage(page,queryWrapper).getRecords();
+    }
+
+    @Override
+    public int noCatCount(BookInfo info){
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(BookInfo::getUserId,info.getUserId())
+                .ge(!StringUtils.isEmpty(info.getStatus()),BookInfo::getStatus,info.getStatus())
+                .notIn(!StringUtils.isEmpty(info.getCatId()),BookInfo::getCatId,info.getCatId());
+        return bookInfoMapper.selectCount(queryWrapper);
     }
 }

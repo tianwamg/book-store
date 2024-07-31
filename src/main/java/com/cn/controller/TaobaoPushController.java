@@ -1,9 +1,12 @@
 package com.cn.controller;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.cn.anno.PassToken;
 import com.cn.domain.SysUser;
 import com.cn.dto.PushTaskDto;
 import com.cn.dto.TaobaoCatDto;
+import com.cn.dto.TaobaoTokenDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
 import com.cn.service.ISysUerService;
@@ -115,5 +118,14 @@ public class TaobaoPushController {
         //req.setBarcode("6932529211107");
         AlibabaItemPublishSchemaGetResponse rsp = client.execute(req, "6101a02cc21b745ZZ151123d6051766561516d40159ef3a3307647498");
         System.out.println(rsp.getBody());
+    }
+
+    @PassToken
+    @PostMapping("/taobaotoken")
+    public ResultResponse getTaobaoToken(@RequestBody TaobaoTokenDto taobaoTokenDto){
+        System.out.println(JSON.toJSONString(taobaoTokenDto));
+        redisTemplate.opsForValue().set("taobao_token_"+taobaoTokenDto.getShopNick(), JSONObject.toJSONString(taobaoTokenDto));
+        return ResultResponse.success("success");
+
     }
 }
