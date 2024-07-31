@@ -75,7 +75,7 @@ public class BookPushListener {
         JSONObject json = JSONObject.parseObject(msg);
         PushTaskDto pushTaskDto = JSONObject.parseObject(msg,PushTaskDto.class);
         goodsPush(pushTaskDto);
-        System.out.println("书籍发布任务2...end:...");
+        System.out.println("书籍发布任务...2...end:...");
     }
 
     public void receivePushBookMsg3(String msg){
