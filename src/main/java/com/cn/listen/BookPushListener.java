@@ -233,35 +233,35 @@ public class BookPushListener {
             case "content"://正面
                 Thumbnails.of(new URL(net))
                         .forceSize(li.getWidth(),li.getHeight())
-                        .watermark(Positions.CENTER,li,0.5f)
+                        .watermark(Positions.CENTER,li,0.8f)
                         .outputQuality(1f)
                         .toFile(path);
                 break;
             case "leftTop"://左上
                 Thumbnails.of(new URL(net))
                         .forceSize(li.getWidth(),li.getHeight())
-                        .watermark(Positions.TOP_LEFT,li,0.5f)
+                        .watermark(Positions.TOP_LEFT,li,0.8f)
                         .outputQuality(1f)
                         .toFile(path);
                 break;
             case "rightTop"://右上
                 Thumbnails.of(new URL(net))
                         .forceSize(li.getWidth(),li.getHeight())
-                        .watermark(Positions.TOP_RIGHT,li,0.5f)
+                        .watermark(Positions.TOP_RIGHT,li,0.8f)
                         .outputQuality(1f)
                         .toFile(path);
                 break;
             case "leftBottom"://左下
                 Thumbnails.of(new URL(net))
                         .size(li.getWidth(),li.getHeight())
-                        .watermark(Positions.BOTTOM_LEFT,li,0.5f)
+                        .watermark(Positions.BOTTOM_LEFT,li,0.8f)
                         .outputQuality(1f)
                         .toFile(path);
                 break;
             case "rightBottom"://右下
                 Thumbnails.of(new URL(net))
                         .forceSize(li.getWidth(),li.getHeight())
-                        .watermark(Positions.BOTTOM_RIGHT,li,0.5f)
+                        .watermark(Positions.BOTTOM_RIGHT,li,0.8f)
                         .outputQuality(1f)
                         .toFile(path);
                 break;
@@ -330,11 +330,11 @@ public class BookPushListener {
         PictureUploadResponse rsp = null;
         try {
             rsp = client.execute(req, sessionKey);//6100402dfe1fb0bc8c2eb17198ec27fb71e78eee49336da2506614820
-            //统计埋点
-            taobaoApiStat.sendApiStat();
         } catch (ApiException e) {
             e.printStackTrace();
         }
+        //统计埋点
+        taobaoApiStat.sendApiStat();
         return rsp.getPicture().getPicturePath();
     }
 
