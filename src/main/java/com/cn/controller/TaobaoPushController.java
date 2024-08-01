@@ -21,6 +21,7 @@ import com.taobao.api.domain.SellerCat;
 import com.taobao.api.domain.Shop;
 import com.taobao.api.request.AlibabaItemPublishSchemaGetRequest;
 import com.taobao.api.response.AlibabaItemPublishSchemaGetResponse;
+import com.taobao.api.response.UserSellerGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -52,8 +53,8 @@ public class TaobaoPushController {
     @PostMapping("/savekey")
     public ResultResponse saveSessionKey(@RequestBody CommonRequest<String> request){
         //首先查询当前账号绑定店铺是否一致
-        Shop shop = taobaoService.getSellerInfo(request.getRequestData());
-        System.out.println("shop info..."+JSON.toJSONString(shop));
+        UserSellerGetResponse sellerInfo = taobaoService.getUserSellerInfo(request.getRequestData());
+        System.out.println("shop info..."+JSON.toJSONString(sellerInfo));
         SysUser sysUser = iSysUerService.getById(request.getUserId());
         redisTemplate.opsForValue().set("taobao_key_"+request.getUserId(),request.getRequestData(),7, TimeUnit.DAYS);
         return ResultResponse.success("true");

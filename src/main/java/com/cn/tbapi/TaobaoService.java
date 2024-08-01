@@ -55,6 +55,23 @@ public class TaobaoService {
         return rsp.getShop();
     }
 
+    @Cacheable(cacheNames = "seller",key = "#key")
+    public UserSellerGetResponse getUserSellerInfo(String key){
+        TaobaoClient client = SingletonClient.INSTANCE.getClient();
+        UserSellerGetRequest req = new UserSellerGetRequest();
+        req.setFields("nick,sex");
+        UserSellerGetResponse rsp = null;
+        try {
+            rsp = client.execute(req, key);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        //统计埋点
+        taobaoApiStat.sendApiStat();
+        return rsp;
+
+    }
+
     /**
      * 获取分类模版
      * @return
