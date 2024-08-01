@@ -23,10 +23,7 @@ import com.taobao.api.request.AlibabaItemPublishSchemaGetRequest;
 import com.taobao.api.response.AlibabaItemPublishSchemaGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +118,7 @@ public class TaobaoPushController {
     }
 
     @PassToken
-    @PostMapping("/taobaotoken")
+    @GetMapping("/taobaotoken")
     public ResultResponse getTaobaoToken(@RequestBody TaobaoTokenDto taobaoTokenDto){
         System.out.println(JSON.toJSONString(taobaoTokenDto));
         redisTemplate.opsForValue().set("taobao_token_"+taobaoTokenDto.getShopNick(), JSONObject.toJSONString(taobaoTokenDto));
