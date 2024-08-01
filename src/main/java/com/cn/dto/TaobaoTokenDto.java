@@ -8,11 +8,11 @@ import java.util.Date;
 @Data
 public class TaobaoTokenDto implements Serializable {
 
-    private int code;
-    private int state;;
+    private String code;
+    private String state;;
     private String accessToken;
     private String refreshToken;
-    private Date expiresIn;
+    private Long expiresIn;
     private String shopNick;
-    private Long expirationTime;
+    private String expirationTime;
 }

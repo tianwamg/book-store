@@ -26,6 +26,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -52,6 +53,7 @@ public class TaobaoPushController {
     public ResultResponse saveSessionKey(@RequestBody CommonRequest<String> request){
         //首先查询当前账号绑定店铺是否一致
         Shop shop = taobaoService.getSellerInfo(request.getRequestData());
+        System.out.println("shop info..."+JSON.toJSONString(shop));
         SysUser sysUser = iSysUerService.getById(request.getUserId());
         redisTemplate.opsForValue().set("taobao_key_"+request.getUserId(),request.getRequestData(),7, TimeUnit.DAYS);
         return ResultResponse.success("true");
@@ -119,10 +121,11 @@ public class TaobaoPushController {
 
     @PassToken
     @GetMapping("/taobaotoken")
-    public ResultResponse getTaobaoToken(@RequestBody TaobaoTokenDto taobaoTokenDto){
-        System.out.println(JSON.toJSONString(taobaoTokenDto));
-        redisTemplate.opsForValue().set("taobao_token_"+taobaoTokenDto.getShopNick(), JSONObject.toJSONString(taobaoTokenDto));
-        return ResultResponse.success("success");
+    public ResultResponse<String> getTaobaoToken(@RequestParam Map<String,Object> map){
+        System.out.println(JSON.toJSONString(map));
+        //TaobaoTokenDto tokenDto = JSONObject.parseObject(map.toString(),TaobaoTokenDto.class);
+       // redisTemplate.opsForValue().set("taobao_token_"+taobaoTokenDto.getShopNick(), JSONObject.toJSONString(taobaoTokenDto));
+        return ResultResponse.success(JSON.toJSONString(map));
 
     }
 }
