@@ -15,10 +15,7 @@ import com.cn.tbapi.TaobaoService;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
-import com.taobao.api.domain.DeliveryTemplate;
-import com.taobao.api.domain.ItemCat;
-import com.taobao.api.domain.SellerCat;
-import com.taobao.api.domain.Shop;
+import com.taobao.api.domain.*;
 import com.taobao.api.request.AlibabaItemPublishSchemaGetRequest;
 import com.taobao.api.response.AlibabaItemPublishSchemaGetResponse;
 import com.taobao.api.response.UserSellerGetResponse;
@@ -53,10 +50,10 @@ public class TaobaoPushController {
     @PostMapping("/savekey")
     public ResultResponse saveSessionKey(@RequestBody CommonRequest<String> request){
         //首先查询当前账号绑定店铺是否一致
-        UserSellerGetResponse sellerInfo = taobaoService.getUserSellerInfo(request.getRequestData());
+        User sellerInfo = taobaoService.getUserSellerInfo(request.getRequestData());
         System.out.println("shop info..."+JSON.toJSONString(sellerInfo));
         SysUser sysUser = iSysUerService.getById(request.getUserId());
-        if(!sellerInfo.getUser().getDisplaynick().equals(sysUser.getName()) && !sellerInfo.getUser().getNick().equals(sysUser.getName())){
+        if(!sellerInfo.getDisplaynick().equals(sysUser.getName()) && !sellerInfo.getNick().equals(sysUser.getName())){
             return ResultResponse.error("403","当前登录账号与淘宝账号不一致，请重新登录");
         }
         redisTemplate.opsForValue().set("taobao_key_"+request.getUserId(),request.getRequestData(),7, TimeUnit.DAYS);
