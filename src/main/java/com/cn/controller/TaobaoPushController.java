@@ -52,7 +52,10 @@ public class TaobaoPushController {
         //首先查询当前账号绑定店铺是否一致
         User sellerInfo = taobaoService.getUserSellerInfo(request.getRequestData());
         System.out.println("shop info..."+JSON.toJSONString(sellerInfo));
-        SysUser sysUser = iSysUerService.getById(request.getUserId());
+        SysUser sysUser =SysUser.builder()
+                .userId(request.getUserId())
+                .build();
+        sysUser = iSysUerService.getByUserIdOrName(sysUser);
         if(!sellerInfo.getDisplaynick().equals(sysUser.getName()) && !sellerInfo.getNick().equals(sysUser.getName())){
             return ResultResponse.error("403","当前登录账号与淘宝账号不一致，请重新登录");
         }
