@@ -9,10 +9,7 @@ import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.FileItem;
 import com.taobao.api.TaobaoClient;
-import com.taobao.api.domain.DeliveryTemplate;
-import com.taobao.api.domain.ItemCat;
-import com.taobao.api.domain.SellerCat;
-import com.taobao.api.domain.Shop;
+import com.taobao.api.domain.*;
 import com.taobao.api.request.*;
 import com.taobao.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +53,7 @@ public class TaobaoService {
     }
 
     @Cacheable(cacheNames = "seller",key = "#key")
-    public UserSellerGetResponse getUserSellerInfo(String key){
+    public User getUserSellerInfo(String key){
         TaobaoClient client = SingletonClient.INSTANCE.getClient();
         UserSellerGetRequest req = new UserSellerGetRequest();
         req.setFields("nick,sex");
@@ -68,7 +65,7 @@ public class TaobaoService {
         }
         //统计埋点
         taobaoApiStat.sendApiStat();
-        return rsp;
+        return rsp.getUser();
 
     }
 
