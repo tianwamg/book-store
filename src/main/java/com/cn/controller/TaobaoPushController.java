@@ -57,7 +57,7 @@ public class TaobaoPushController {
                 .build();
         sysUser = iSysUerService.getByUserIdOrName(sysUser);
         if(!sellerInfo.getDisplaynick().equals(sysUser.getName()) && !sellerInfo.getNick().equals(sysUser.getName())){
-            return ResultResponse.error("403","当前登录账号与淘宝账号不一致，请重新登录");
+            return ResultResponse.error("500","当前登录账号与淘宝账号不一致，请重新登录");
         }
         redisTemplate.opsForValue().set("taobao_key_"+request.getUserId(),request.getRequestData(),7, TimeUnit.DAYS);
         return ResultResponse.success("true");
