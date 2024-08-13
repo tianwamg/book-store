@@ -130,7 +130,7 @@ public class BookPushListener {
             if(pushTaskDto.getTitle()==null){
                 pushTaskDto.setTitle("");
             }
-            bookList.parallelStream().forEach(n ->{
+            for(BookInfo n:bookList){
                 //处理水印
                 String path = "E:\\taobao\\"+pushTaskDto.getUserId()+"\\"+pushTaskDto.getTaskId()+n.getId()+".jpg";
                 path = "/var/img/goodsprint/"+n.getUserId()+"/"+n.getPullId()+"/"+n.getId()+".jpg";
@@ -198,7 +198,7 @@ public class BookPushListener {
                 bookInfo.setTaobaoId(rsp.getItemId());
                 bookInfo.setCatId(pushTaskDto.getSeller());
                 iBookInfoService.updateStatus(bookInfo);
-            });
+            }
         }
     }
 
