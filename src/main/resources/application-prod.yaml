@@ -61,3 +61,5 @@ spring:
   #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: com.cn.domain
+logging:
+  config: classpath:logback.xml
