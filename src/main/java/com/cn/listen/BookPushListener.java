@@ -161,10 +161,14 @@ public class BookPushListener {
                 req.setBizType("taobao/1.0.0/brandAsyncRenderEnable");
                 req.setMarket("taobao");
                 req.setCatId(50010485l);
+                String title = pushTaskDto.getTitle().trim()+n.getTitle().trim()+"——"+n.getAuthor().trim();
+                if(String_length(title)>60){
+                    continue;
+                }
                 String schema = "<itemSchema>" +
                         "<field id=\"stuffStatus\" name=\"宝贝类型\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><value>"+6+"</value><options><option displayName=\"全新\" value=\"5\" readonly=\"false\"/><option displayName=\"二手\" value=\"6\" readonly=\"false\"/></options></field>" +
                         "<field id=\"title\" name=\"宝贝标题\" type=\"input\"><rules><rule name=\"tipRule\" value=\"标题和描述关键词是否违规自检工具：&lt;a href='//ss.taobao.com/compliance#/main' target='_blank'&gt;商品合规工具&lt;/a&gt;\"/><rule name=\"tipRule\" value=\"标题直接影响商品的搜索曝光机会，请&lt;a href='//market.m.taobao.com/app/qn/toutiao-new/index-pc.html#/detail/10682439?_k=rkwe5f' target='_blank'&gt;点此查看详情&lt;/a&gt;学习标题填写规范及优化知识\"/><rule name=\"tipRule\" value=\"即日起，标题中请勿使用制表符、换行符。若填入制表符、换行符，系统将自动替换成空格\"/><rule name=\"requiredRule\" value=\"true\"/><rule name=\"maxLengthRule\" value=\"60\" exProperty=\"include\" unit=\"byte\"/><rule name=\"tipRule\" value=\"最多允许输入30个汉字（60字符）\"/><rule name=\"valueTypeRule\" value=\"text\"/></rules>" +
-                        "<value>"+pushTaskDto.getTitle()+n.getTitle()+"——"+n.getAuthor()+"</value></field>" +
+                        "<value>"+title+"</value></field>" +
                        // "<field id=\"catProp\" name=\"类目属性\" type=\"complex\"><rules><rule name=\"tipRule\" value=\"若发布时遇到属性、属性值不能满足您提交商品的需求，请点击&lt;a href='https://cpv.taobao.com/report/categoryPropertyIssueReport.htm?categoryId=50010485' target='_blank'&gt;商品属性问题反馈&lt;/a&gt;\"/>" +
                        // "<rule name=\"tipRule\" value=\"请根据实际情况填写产品的重要属性，填写属性越完整，越有可能影响搜索流量，越有机会被消费者购买。&lt;a target = '_blank' href='https://market.m.taobao.com/app/qn/toutiao-new/index-pc.html#/detail/10671889?_k=3u6obw'&gt;了解更多&lt;/a&gt;\"/>" +
                       //  "</rules><complex-value><field id=\"p-22370\" name=\"书刊种类\" type=\"singleCheck\"><value>"+pushTaskDto.getCat()+"</value></field>" +
@@ -337,6 +341,20 @@ public class BookPushListener {
         //统计埋点
         taobaoApiStat.sendApiStat();
         return rsp.getPicture().getPicturePath();
+    }
+
+    public int String_length(String value){
+        int val = 0;
+        String chinese = "[\u4e00-\u9fa5]";
+        for(int i=0;i<value.length();i++){
+            String temp = value.substring(i,i+1);
+            if(temp.matches(chinese)){
+                val +=2;
+            }else {
+                val +=1;
+            }
+        }
+        return val;
     }
 
 }
