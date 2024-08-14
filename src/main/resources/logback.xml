@@ -3,25 +3,10 @@
 <!-- logback默认每60秒扫描该文件一次，如果有变动则用变动后的配置文件。 -->
 <configuration scan="false">
 
-    <!-- ==============================================开发环境=========================================== -->
-    <springProfile name="dev">
 
-        <!-- 控制台输出 -->
-        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-            </encoder>
-        </appender>
-
-        <!-- 日志输出级别 -->
-        <root level="INFO">
-            <appender-ref ref="STDOUT"/>
-        </root>
-    </springProfile>
 
     <!-- ==============================================生产环境=========================================== -->
-    <springProfile name="prod">
+
         <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
         <property name="LOG_HOME" value="/usr/local/apache-tomcat-9.0.89/logs"/>
 
@@ -100,5 +85,5 @@
             <appender-ref ref="INFO_APPENDER"/>
             <appender-ref ref="ERROR_APPENDER"/>
         </root>
-    </springProfile>
+
 </configuration>
