@@ -138,6 +138,7 @@ public class BookPushListener {
                 if(!file.exists()){
                     file.mkdirs();
                 }
+                //print.setUrl("D:\\waterprint\\8571568672\\1721232486461.png");
                 try {
                     imgwater(n.getImg(),print,path);
                 } catch (IOException e) {
@@ -161,8 +162,8 @@ public class BookPushListener {
                 req.setBizType("taobao/1.0.0/brandAsyncRenderEnable");
                 req.setMarket("taobao");
                 req.setCatId(50010485l);
-                String title = pushTaskDto.getTitle().trim()+n.getTitle().trim()+"——"+n.getAuthor().trim();
-                if(String_length(title)>60){
+                String title = pushTaskDto.getTitle().trim()+n.getTitle().trim();
+                if(title.length()>30){
                     continue;
                 }
                 String schema = "<itemSchema>" +
@@ -192,7 +193,7 @@ public class BookPushListener {
                 try {
                     rsp = client.execute(req, sessionKey);
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    //e.getMessage();
                 }
                 //System.out.println(rsp.getBody());
                 BookInfo bookInfo = new BookInfo();
