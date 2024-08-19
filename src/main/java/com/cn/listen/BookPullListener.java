@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -204,7 +206,7 @@ public class BookPullListener {
         List<BookInfo> list = new ArrayList<>();
         WordTree wordTree = wordTree(json.getLong("userId"));
         for(int i =1;i<1000;i++){
-             list = reptile(json.getLong("storeId"),cat,i,json.getLong("userId"),json.getInteger("taskId"),wordTree);
+             list = reptile(json.getLong("storeId"),cat,i,json.getLong("userId"),json.getInteger("taskId"),json.getString("stime"),json.getString("etime"),wordTree);
             if(list != null && list.size() >0){
                 iBookInfoService.saveBatch(list);
 
@@ -217,7 +219,7 @@ public class BookPullListener {
     /**
      * 爬取网络内容
      */
-    public List<BookInfo> reptile(Long storeId,String cat,int page,Long userId,int pullId,WordTree wordTree){
+    public List<BookInfo> reptile(Long storeId,String cat,int page,Long userId,int pullId,String stime,String etime,WordTree wordTree){
         try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
@@ -265,7 +267,17 @@ public class BookPullListener {
                     return list ;
                 }
                 Elements blogList = blog.getElementsByClass("item clearfix");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 for (Element element : blogList) {
+                    if(!StringUtils.isEmpty(stime) && !StringUtils.isEmpty(etime)){
+                        String time = element.select("div.add-time-box span").first().text();
+                        LocalDate localDate = LocalDate.parse(time,formatter);
+                        LocalDate st = LocalDate.parse(stime,formatter);
+                        LocalDate et = LocalDate.parse(etime,formatter);
+                        if(!localDate.isAfter(st) || !localDate.isBefore(et)){
+                            continue;
+                        }
+                    }
                     BookInfo bookInfo = new BookInfo();
                     bookInfo.setPullId(pullId);
                     bookInfo.setUserId(userId);
@@ -294,7 +306,6 @@ public class BookPullListener {
                         }
                         bookInfo.setAuthor(as[0].trim());
                         bookInfo.setExtra(author);
-
                     }
                     String sens = wordTree.match(bookInfo.getTitle());
                     if(sens == null || sens.isEmpty()) {

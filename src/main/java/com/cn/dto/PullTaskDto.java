@@ -11,4 +11,6 @@ public class PullTaskDto implements Serializable {
     private Long userId;
     private String storeId;
     private String category;
+    private String startTime;
+    private String endTime;
 }

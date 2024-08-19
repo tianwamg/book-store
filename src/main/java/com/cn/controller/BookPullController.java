@@ -49,6 +49,8 @@ public class BookPullController {
             object.put("storeId", id);
             object.put("cat", pullTaskDto.getCategory());
             object.put("userId", request.getUserId());
+            object.put("stime",pullTaskDto.getStartTime());
+            object.put("etime",pullTaskDto.getEndTime());
 
             BookPull pull = BookPull.builder()
                     .name("任务来源书店:" + id)
