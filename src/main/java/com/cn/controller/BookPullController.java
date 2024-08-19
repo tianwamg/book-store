@@ -2,10 +2,12 @@ package com.cn.controller;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cn.domain.BookInfo;
 import com.cn.domain.BookPull;
 import com.cn.dto.PullTaskDto;
 import com.cn.request.CommonRequest;
 import com.cn.response.ResultResponse;
+import com.cn.service.IBookInfoService;
 import com.cn.service.IBookPullService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class BookPullController {
 
     @Autowired
     IBookPullService iBookPullService;
+
+    @Autowired
+    IBookInfoService iBookInfoService;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -112,6 +117,15 @@ public class BookPullController {
             }
         }
         return ResultResponse.success("书籍拉取任务即将重新开始");
+    }
+
+    @PostMapping("/deletepull")
+    public ResultResponse<Integer> deletepull(@RequestBody CommonRequest<BookPull> request){
+        BookInfo info = new BookInfo();
+        info.setUserId(request.getUserId());
+        info.setPullId(request.getRequestData().getId());
+        int i = iBookInfoService.deleteTBPull(info);
+        return ResultResponse.success("所有未上架图书以全部删除!",i);
     }
 
 }
