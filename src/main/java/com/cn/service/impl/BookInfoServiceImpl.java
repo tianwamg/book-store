@@ -134,4 +134,14 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
                 .notIn(!StringUtils.isEmpty(info.getCatId()),BookInfo::getCatId,info.getCatId());
         return bookInfoMapper.selectCount(queryWrapper);
     }
+
+    @Override
+    public int deleteTBPull(BookInfo bookInfo){
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(BookInfo::getUserId,bookInfo.getUserId())
+                .eq(BookInfo::getPullId,bookInfo.getPullId())
+                .eq(BookInfo::getTaobaoId,0);
+        return bookInfoMapper.delete(queryWrapper);
+    }
 }

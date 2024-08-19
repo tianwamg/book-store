@@ -37,4 +37,6 @@ public interface IBookInfoService extends IService<BookInfo> {
 
     public int noCatCount(BookInfo info);
 
+    public int deleteTBPull(BookInfo bookInfo);
+
 }
