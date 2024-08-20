@@ -16,12 +16,12 @@ public class TaobaoApiStat {
     RedisTemplate redisTemplate;
 
     @Async
-    public void sendApiStat(){
+    public void sendApiStat(String method){
         redisTemplate.opsForValue().increment("taobao_stat");
         String url = "http://top.cnedo.com/ApiService/AddLog";
         Map<String,String> map = new HashMap<>();
         map.put("appKey","21310116");
-        map.put("method","taobao.vas.subscribe.get");
+        map.put("method",method);//taobao.vas.subscribe.get
         map.put("name","jdhstore");
         map.put("isFail","0");
         Utils.doHttpRequest(url,map);

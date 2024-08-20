@@ -48,7 +48,7 @@ public class TaobaoService {
             e.printStackTrace();
         }
         //统计埋点
-        taobaoApiStat.sendApiStat();
+        taobaoApiStat.sendApiStat("");
         return rsp.getShop();
     }
 
@@ -64,7 +64,7 @@ public class TaobaoService {
             e.printStackTrace();
         }
         //统计埋点
-        taobaoApiStat.sendApiStat();
+        taobaoApiStat.sendApiStat("taobao.user.seller.get");
         return rsp.getUser();
 
     }
@@ -86,7 +86,7 @@ public class TaobaoService {
             e.printStackTrace();
         }
         //统计埋点
-        taobaoApiStat.sendApiStat();
+        taobaoApiStat.sendApiStat("taobao.itemcats.get");
         return rsp.getItemCats();
     }
 
@@ -107,7 +107,7 @@ public class TaobaoService {
             e.printStackTrace();
         }
         //统计埋点
-        taobaoApiStat.sendApiStat();
+        taobaoApiStat.sendApiStat("taobao.sellercats.list.get");
         return rsp.getSellerCats();
     }
 
@@ -129,7 +129,7 @@ public class TaobaoService {
             e.printStackTrace();
         }
         //统计埋点
-        taobaoApiStat.sendApiStat();
+        taobaoApiStat.sendApiStat("taobao.delivery.templates.get");
         return rsp.getDeliveryTemplates();
     }
 

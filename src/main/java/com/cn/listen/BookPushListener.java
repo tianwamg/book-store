@@ -340,7 +340,7 @@ public class BookPushListener {
             e.printStackTrace();
         }
         //统计埋点
-        taobaoApiStat.sendApiStat();
+        taobaoApiStat.sendApiStat("taobao.picture.upload");
         return rsp.getPicture().getPicturePath();
     }
 

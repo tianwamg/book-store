@@ -50,7 +50,7 @@ public class TaobaoPushController {
     @PostMapping("/savekey")
     public ResultResponse saveSessionKey(@RequestBody CommonRequest<String> request){
         //首先查询当前账号绑定店铺是否一致
-        User sellerInfo = taobaoService.getUserSellerInfo(request.getRequestData());
+        /*User sellerInfo = taobaoService.getUserSellerInfo(request.getRequestData());
         System.out.println("shop info..."+JSON.toJSONString(sellerInfo));
         SysUser sysUser =SysUser.builder()
                 .userId(request.getUserId())
@@ -58,7 +58,7 @@ public class TaobaoPushController {
         sysUser = iSysUerService.getByUserIdOrName(sysUser);
         if(!sellerInfo.getDisplaynick().equals(sysUser.getName()) && !sellerInfo.getNick().equals(sysUser.getName())){
             return ResultResponse.error("500","当前登录账号与淘宝账号不一致，请重新登录");
-        }
+        }*/
         redisTemplate.opsForValue().set("taobao_key_"+request.getUserId(),request.getRequestData(),7, TimeUnit.DAYS);
         return ResultResponse.success("true");
     }
