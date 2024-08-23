@@ -54,7 +54,7 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
         QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .eq(BookInfo::getUserId,info.getUserId())
-                .eq(!StringUtils.isEmpty(info.getStatus()),BookInfo::getStatus,info.getStatus())
+                .in(BookInfo::getStatus,0,1)
                 .eq(!StringUtils.isEmpty(info.getPullId()),BookInfo::getPullId,info.getPullId());
 
         return bookInfoMapper.selectCount(queryWrapper);
@@ -143,5 +143,19 @@ public class BookInfoServiceImpl extends ServiceImpl<BookInfoMapper, BookInfo> i
                 .eq(BookInfo::getPullId,bookInfo.getPullId())
                 .eq(BookInfo::getTaobaoId,0);
         return bookInfoMapper.delete(queryWrapper);
+    }
+
+    @Override
+    public Page<BookInfo> getTBPageList(CommonRequest<BookInfo> request){
+        Page<BookInfo> page = new Page<>(request.getPage().getCurrent(),request.getPage().getPageSize());
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        Optional.ofNullable(request.getRequestData()).ifPresent(r->
+                queryWrapper.lambda()
+                        .eq(BookInfo::getUserId,request.getUserId())
+                        .in(!StringUtils.isEmpty(r.getStatus()),BookInfo::getStatus,0,1)
+                        .eq(!StringUtils.isEmpty(r.getPullId()),BookInfo::getPullId,r.getPullId())
+                        .orderByAsc(BookInfo::getId)
+        );
+        return bookInfoMapper.selectPage(page,queryWrapper);
     }
 }

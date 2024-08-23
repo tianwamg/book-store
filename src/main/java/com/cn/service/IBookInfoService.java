@@ -39,4 +39,6 @@ public interface IBookInfoService extends IService<BookInfo> {
 
     public int deleteTBPull(BookInfo bookInfo);
 
+    public Page<BookInfo> getTBPageList(CommonRequest<BookInfo> request);
+
 }

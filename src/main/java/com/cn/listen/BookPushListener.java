@@ -139,11 +139,7 @@ public class BookPushListener {
                     file.mkdirs();
                 }
                 //print.setUrl("D:\\waterprint\\8571568672\\1721232486461.png");
-                try {
-                    imgwater(n.getImg(),print,path);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 //处理价格
                 for(Price p: prices){
                     if(n.getPrice().compareTo(p.getStartPrice() )>=0 && n.getPrice().compareTo(p.getEndPrice())<=0){
@@ -155,8 +151,15 @@ public class BookPushListener {
                         break;
                     }
                 }
-                //上传图片
-                String pic = taobaoImgUpload(path,n.getUserId()+"-"+n.getPullId()+"-"+n.getId(),sessionKey);
+                String pic;
+                if(n.getStatus()==0){
+                    pic = n.getRemark();
+                }else{
+                    //处理图片
+                    imgwater(n.getImg(),print,path);
+                    //上传图片
+                    pic = taobaoImgUpload(path,n.getUserId()+"-"+n.getPullId()+"-"+n.getId(),sessionKey);
+                }
                 //上传商品
                 AlibabaItemPublishSubmitRequest req = new AlibabaItemPublishSubmitRequest();
                 req.setBizType("taobao/1.0.0/brandAsyncRenderEnable");
@@ -194,6 +197,13 @@ public class BookPushListener {
                     rsp = client.execute(req, sessionKey);
                 } catch (Exception e) {
                     //e.getMessage();
+                    BookInfo bookInfo = new BookInfo();
+                    bookInfo.setId(n.getId());
+                    bookInfo.setStatus(0);
+                    bookInfo.setUserId(n.getUserId());
+                    bookInfo.setRemark(pic);
+                    iBookInfoService.updateStatus(bookInfo);
+                    continue;
                 }
                 //System.out.println(rsp.getBody());
                 BookInfo bookInfo = new BookInfo();
@@ -220,7 +230,7 @@ public class BookPushListener {
         request.setRequestData(info);
         request.setPage(page);
         request.setUserId(userId);
-        return iBookInfoService.getPageList(request).getRecords();
+        return iBookInfoService.getTBPageList(request).getRecords();
     }
 
 
