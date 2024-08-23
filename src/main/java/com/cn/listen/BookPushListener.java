@@ -156,7 +156,7 @@ public class BookPushListener {
                     }
                 }
                 //上传图片
-                String pic = taobaoImgUpload(path,n.getTitle(),sessionKey);
+                String pic = taobaoImgUpload(path,n.getUserId()+"-"+n.getPullId()+"-"+n.getId(),sessionKey);
                 //上传商品
                 AlibabaItemPublishSubmitRequest req = new AlibabaItemPublishSubmitRequest();
                 req.setBizType("taobao/1.0.0/brandAsyncRenderEnable");
