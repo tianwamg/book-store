@@ -131,6 +131,10 @@ public class BookPushListener {
                 pushTaskDto.setTitle("");
             }
             for(BookInfo n:bookList){
+                String title = trimStr(pushTaskDto.getTitle().trim()+n.getTitle().trim());
+                if(title.length()>30) {
+                    continue;
+                }
                 //处理水印
                 String path = "E:\\taobao\\"+pushTaskDto.getUserId()+"\\"+pushTaskDto.getTaskId()+n.getId()+".jpg";
                 path = "/var/img/goodsprint/"+n.getUserId()+"/"+n.getPullId()+"/"+n.getId()+".jpg";
@@ -151,6 +155,7 @@ public class BookPushListener {
                         break;
                     }
                 }
+
                 String pic;
                 if(n.getStatus()==0){
                     pic = n.getRemark();
@@ -165,10 +170,6 @@ public class BookPushListener {
                 req.setBizType("taobao/1.0.0/brandAsyncRenderEnable");
                 req.setMarket("taobao");
                 req.setCatId(50010485l);
-                String title = pushTaskDto.getTitle().trim()+n.getTitle().trim();
-                if(title.length()>30){
-                    continue;
-                }
                 String schema = "<itemSchema>" +
                         "<field id=\"stuffStatus\" name=\"宝贝类型\" type=\"singleCheck\"><rules><rule name=\"requiredRule\" value=\"true\"/></rules><value>"+6+"</value><options><option displayName=\"全新\" value=\"5\" readonly=\"false\"/><option displayName=\"二手\" value=\"6\" readonly=\"false\"/></options></field>" +
                         "<field id=\"title\" name=\"宝贝标题\" type=\"input\"><rules><rule name=\"tipRule\" value=\"标题和描述关键词是否违规自检工具：&lt;a href='//ss.taobao.com/compliance#/main' target='_blank'&gt;商品合规工具&lt;/a&gt;\"/><rule name=\"tipRule\" value=\"标题直接影响商品的搜索曝光机会，请&lt;a href='//market.m.taobao.com/app/qn/toutiao-new/index-pc.html#/detail/10682439?_k=rkwe5f' target='_blank'&gt;点此查看详情&lt;/a&gt;学习标题填写规范及优化知识\"/><rule name=\"tipRule\" value=\"即日起，标题中请勿使用制表符、换行符。若填入制表符、换行符，系统将自动替换成空格\"/><rule name=\"requiredRule\" value=\"true\"/><rule name=\"maxLengthRule\" value=\"60\" exProperty=\"include\" unit=\"byte\"/><rule name=\"tipRule\" value=\"最多允许输入30个汉字（60字符）\"/><rule name=\"valueTypeRule\" value=\"text\"/></rules>" +
@@ -231,6 +232,17 @@ public class BookPushListener {
         request.setPage(page);
         request.setUserId(userId);
         return iBookInfoService.getTBPageList(request).getRecords();
+    }
+
+    /**
+     * 处理特殊字符
+     * @param str
+     * @return
+     */
+    public String trimStr(String str){
+        return str.chars().filter(Character::isLetterOrDigit)
+                .collect(StringBuilder::new,StringBuilder::appendCodePoint,StringBuilder::append)
+                .toString();
     }
 
 
